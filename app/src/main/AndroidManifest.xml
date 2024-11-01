@@ -172,7 +172,7 @@
             android:configChanges="uiMode"
             android:exported="false"
             android:label="@string/files" />
-        <activity android:name=".SubscriptionsActivity" />
+        <activity android:name=".SubscriptionsActivity" android:label="套餐购买" />
 
         <service
             android:name=".LogcatService"

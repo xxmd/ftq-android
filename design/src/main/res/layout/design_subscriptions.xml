@@ -15,10 +15,26 @@
         android:paddingStart="@{self.surface.insets.start}"
         android:paddingEnd="@{self.surface.insets.end}">
 
-        <include
-            android:id="@+id/main_list"
-            layout="@layout/common_recycler_list"
-            app:insets="@{self.surface.insets}" />
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
+
+            <include
+                android:id="@+id/main_list"
+                layout="@layout/common_recycler_list"
+                app:insets="@{self.surface.insets}" />
+
+            <Button
+                android:layout_marginHorizontal="15dp"
+                android:layout_marginBottom="40dp"
+                android:layout_alignParentBottom="true"
+                android:textSize="18sp"
+                android:text="确认"
+                android:paddingVertical="20dp"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"/>
+        </RelativeLayout>
 
         <com.github.kr328.clash.design.view.ActivityBarLayout
             android:id="@+id/activity_bar_layout"

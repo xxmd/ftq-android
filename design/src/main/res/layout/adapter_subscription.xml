@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android">
+    <data>
+        <variable
+            name="subscription"
+            type="com.github.kr328.clash.service.model.Subscription" />
+        <import type="android.view.View" />
+        <import type="com.github.kr328.clash.design.util.I18nKt" />
+        <import type="com.github.kr328.clash.design.util.IntervalKt" />
+    </data>
+
+    <LinearLayout
+        android:id="@+id/root_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginHorizontal="@dimen/item_header_margin"
+        android:layout_marginVertical="5dp"
+        android:background="@drawable/bg_b"
+        android:clickable="true"
+        android:elevation="5dp"
+        android:focusable="true"
+        android:gravity="center_vertical"
+        android:nextFocusRight="@id/menu_view"
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/icon_view"
+            android:layout_width="@dimen/item_header_component_size"
+            android:layout_height="@dimen/item_header_component_size"
+            android:layout_centerVertical="true"
+            android:layout_marginHorizontal="@dimen/item_header_margin"
+            android:checked="@{subscription.selected}"
+            android:clickable="false"
+            android:focusable="false"
+            android:gravity="center" />
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_weight="1"
+            android:orientation="vertical"
+            android:paddingVertical="@dimen/item_padding_vertical">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text='@{subscription.name + " " + String.valueOf(subscription.price) + " 元"}'
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Body1" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:text='@{String.format("合计: %.2f 元/天", subscription.price / subscription.activationDays)}'
+                android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2" />
+
+        </LinearLayout>
+    </LinearLayout>
+</layout>

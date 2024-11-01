@@ -1,21 +1,23 @@
 package com.github.kr328.clash.design
 
-import android.app.Dialog
 import android.content.Context
 import android.view.View
-import android.view.ViewGroup
-import android.view.animation.Animation
-import android.view.animation.AnimationUtils
-import com.github.kr328.clash.design.adapter.ProfileAdapter
+import com.github.kr328.clash.common.log.Log
+import com.github.kr328.clash.design.adapter.SingleSelectAdapter
 import com.github.kr328.clash.design.adapter.SubscriptionAdapter
-import com.github.kr328.clash.design.databinding.DesignProfilesBinding
 import com.github.kr328.clash.design.databinding.DesignSubscriptionsBinding
-import com.github.kr328.clash.design.databinding.DialogProfilesMenuBinding
-import com.github.kr328.clash.design.dialog.AppBottomSheetDialog
-import com.github.kr328.clash.design.ui.ToastDuration
-import com.github.kr328.clash.design.util.*
+import com.github.kr328.clash.design.util.applyFrom
+import com.github.kr328.clash.design.util.applyLinearAdapter
+import com.github.kr328.clash.design.util.bindAppBarElevation
+import com.github.kr328.clash.design.util.layoutInflater
+import com.github.kr328.clash.design.util.patchDataSet
+import com.github.kr328.clash.design.util.root
 import com.github.kr328.clash.service.model.Profile
+import com.github.kr328.clash.service.model.Subscription
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 
 class SubscriptionsDesign(context: Context) : Design<SubscriptionsDesign.Request>(context) {
@@ -31,43 +33,20 @@ class SubscriptionsDesign(context: Context) : Design<SubscriptionsDesign.Request
 
     private val binding = DesignSubscriptionsBinding
         .inflate(context.layoutInflater, context.root, false)
-    private val adapter = SubscriptionAdapter(context, this::requestActive, this::showMenu)
+    private val adapter = SubscriptionAdapter(context)
 
-    private var allUpdating: Boolean
-        get() = adapter.states.allUpdating;
-        set(value) {
-            adapter.states.allUpdating = value
-        }
-    private val rotateAnimation : Animation = AnimationUtils.loadAnimation(context, R.anim.rotate_infinite)
 
+    private fun onSelectItemChange(subscription: Subscription) {
+        Log.i("onSelectItemChange: " + subscription)
+    }
+
+    val _subscriptionList: List<Subscription> = listOf(
+        Subscription(1, "包天套餐", 1.00, 1, true),
+        Subscription(2, "包月套餐", 10.00, 30, false),
+        Subscription(3, "包年套餐", 50.00, 365, false),
+    )
     override val root: View
         get() = binding.root
-
-    suspend fun patchProfiles(profiles: List<Profile>) {
-        adapter.apply {
-            patchDataSet(this::profiles, profiles, id = { it.uuid })
-        }
-
-        val updatable = withContext(Dispatchers.Default) {
-            profiles.any { it.imported && it.type != Profile.Type.File }
-        }
-
-        withContext(Dispatchers.Main) {
-            binding.updateView.visibility = if (updatable) View.VISIBLE else View.GONE
-        }
-    }
-
-    suspend fun requestSave(profile: Profile) {
-        showToast(R.string.active_unsaved_tips, ToastDuration.Long) {
-            setAction(R.string.edit) {
-                requests.trySend(Request.Edit(profile))
-            }
-        }
-    }
-
-    fun updateElapsed() {
-        adapter.updateElapsed()
-    }
 
     init {
         binding.self = this
@@ -78,70 +57,20 @@ class SubscriptionsDesign(context: Context) : Design<SubscriptionsDesign.Request
             it.bindAppBarElevation(binding.activityBarLayout)
             it.applyLinearAdapter(context, adapter)
         }
-    }
 
-    private fun showMenu(profile: Profile) {
-//        val dialog = AppBottomSheetDialog(context)
-//
-//        val binding = DialogProfilesMenuBinding
-//            .inflate(context.layoutInflater, dialog.window?.decorView as ViewGroup?, false)
-//
-//        binding.master = this
-//        binding.self = dialog
-//        binding.profile = profile
-//
-//        dialog.setContentView(binding.root)
-//        dialog.show()
-    }
+        adapter.setSingleSelectListener(object : SingleSelectAdapter.SingleSelectListener<Subscription> {
+            override fun onSelectItemChange(oldItem: Subscription, newItem: Subscription) {
+                onSelectItemChange(newItem)
+            }
+        })
 
-    fun requestUpdateAll() {
-        allUpdating = true;
-        changeUpdateAllButtonStatus()
-        requests.trySend(Request.UpdateAll)
-    }
 
-    fun finishUpdateAll() {
-        allUpdating = false;
-        changeUpdateAllButtonStatus()
-    }
+        adapter.itemList = _subscriptionList
 
-    fun requestCreate() {
-        requests.trySend(Request.Create)
-    }
-
-    private fun requestActive(profile: Profile) {
-        requests.trySend(Request.Active(profile))
-    }
-
-    fun requestUpdate(dialog: Dialog, profile: Profile) {
-        requests.trySend(Request.Update(profile))
-
-        dialog.dismiss()
-    }
-
-    fun requestEdit(dialog: Dialog, profile: Profile) {
-        requests.trySend(Request.Edit(profile))
-
-        dialog.dismiss()
-    }
-
-    fun requestDuplicate(dialog: Dialog, profile: Profile) {
-        requests.trySend(Request.Duplicate(profile))
-
-        dialog.dismiss()
-    }
-
-    fun requestDelete(dialog: Dialog, profile: Profile) {
-        requests.trySend(Request.Delete(profile))
-
-        dialog.dismiss()
-    }
-
-    private fun changeUpdateAllButtonStatus() {
-        if (allUpdating) {
-            binding.updateView.startAnimation(rotateAnimation)
-        } else {
-            binding.updateView.clearAnimation()
-        }
+//        CoroutineScope(Dispatchers.Main).launch {
+//            adapter.apply {
+//                patchDataSet(this::subscriptionList, _subscriptionList, id = { it.id })
+//            }
+//        }
     }
 }
