@@ -8,10 +8,17 @@ abstract class SingleSelectAdapter<T, VH : RecyclerView.ViewHolder>(
 ) : RecyclerView.Adapter<VH>() {
     var itemList: List<T> = emptyList()
         set(value) {
-            field  = value
+            field = value
             notifyDataSetChanged()
         }
     private var selectedPosition: Int = RecyclerView.NO_POSITION
+
+    fun getSelectedItem(): T? {
+        if (selectedPosition in itemList.indices) {
+            return itemList[selectedPosition]
+        }
+        return null
+    }
 
     interface SingleSelectListener<T> {
         fun onSelectItemChange(oldItem: T?, newItem: T)
@@ -37,7 +44,8 @@ abstract class SingleSelectAdapter<T, VH : RecyclerView.ViewHolder>(
 
     fun setSelectedPosition(position: Int) {
         if (position != selectedPosition) {
-            val oldItem = if (selectedPosition in itemList.indices) itemList[selectedPosition] else null
+            val oldItem =
+                if (selectedPosition in itemList.indices) itemList[selectedPosition] else null
             val newItem = itemList.get(position)
 
             notifyItemChanged(selectedPosition)

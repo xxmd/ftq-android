@@ -19,4 +19,5 @@ class SubscriptionsActivity : BaseActivity<SubscriptionsDesign>() {
     private suspend fun SubscriptionsDesign.fetch() {
 
     }
+
 }

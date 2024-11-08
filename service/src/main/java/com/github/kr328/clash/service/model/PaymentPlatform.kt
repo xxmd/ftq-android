@@ -11,9 +11,9 @@ import kotlinx.serialization.UseSerializers
 import java.util.*
 
 @Serializable
-data class Subscription(
+data class PaymentPlatform(
     val id: Int,
     val name: String,
-    val price: Double,
-    val activationDays: Int,
+    val iconUrl: String,
+    val skuList: List<Sku>,
 )

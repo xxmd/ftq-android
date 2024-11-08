@@ -27,11 +27,11 @@ class SubscriptionAdapter(
     }
 
     override fun bindViewHolderOnSelected(holder: Holder, position: Int, item: Subscription) {
-        holder.binding.iconView.isChecked = false
+        holder.binding.iconView.isChecked = true
     }
 
     override fun bindViewHolderOnUnSelected(holder: Holder, position: Int, item: Subscription) {
-        holder.binding.iconView.isChecked = true
+        holder.binding.iconView.isChecked = false
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {

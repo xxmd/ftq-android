@@ -11,9 +11,9 @@ import kotlinx.serialization.UseSerializers
 import java.util.*
 
 @Serializable
-data class Subscription(
+data class Sku(
     val id: Int,
-    val name: String,
-    val price: Double,
-    val activationDays: Int,
+    val platformId: Int,
+    val subscriptionId: Int,
+    val link: String,
 )

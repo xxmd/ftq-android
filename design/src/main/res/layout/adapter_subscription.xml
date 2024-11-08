@@ -29,7 +29,6 @@
             android:layout_height="@dimen/item_header_component_size"
             android:layout_centerVertical="true"
             android:layout_marginHorizontal="@dimen/item_header_margin"
-            android:checked="@{subscription.selected}"
             android:clickable="false"
             android:focusable="false"
             android:gravity="center" />
@@ -45,14 +44,14 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text='@{subscription.name + " " + String.valueOf(subscription.price) + " 元"}'
+                android:text='@{String.format("%s %.0f元", subscription.name, subscription.price)}'
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Body1" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
-                android:text='@{String.format("合计: %.2f 元/天", subscription.price / subscription.activationDays)}'
+                android:text='@{String.format("平均: %.2f 元/天", subscription.price / subscription.activationDays)}'
                 android:textAppearance="@style/TextAppearance.MaterialComponents.Subtitle2" />
 
         </LinearLayout>
