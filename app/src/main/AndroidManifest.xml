@@ -173,6 +173,7 @@
             android:exported="false"
             android:label="@string/files" />
         <activity android:name=".SubscriptionsActivity" android:label="套餐购买" />
+        <activity android:name=".WaitPaymentActivity" android:label="付款确认"/>
 
         <service
             android:name=".LogcatService"

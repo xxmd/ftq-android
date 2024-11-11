@@ -16,4 +16,34 @@ data class Sku(
     val platformId: Int,
     val subscriptionId: Int,
     val link: String,
-)
+) : Parcelable {
+    constructor(parcel: Parcel) : this(
+        parcel.readInt(),
+        parcel.readInt(),
+        parcel.readInt(),
+        parcel.readString() ?: ""
+    ) {
+    }
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeInt(id)
+        parcel.writeInt(platformId)
+        parcel.writeInt(subscriptionId)
+        parcel.writeString(link)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object CREATOR : Parcelable.Creator<Sku> {
+        override fun createFromParcel(parcel: Parcel): Sku {
+            return Sku(parcel)
+        }
+
+        override fun newArray(size: Int): Array<Sku?> {
+            return arrayOfNulls(size)
+        }
+    }
+
+}

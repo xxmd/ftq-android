@@ -33,7 +33,7 @@
 
         <include
             android:id="@+id/main_list"
-            layout="@layout/common_recycler_list" />
+            layout="@layout/common_recycler_list_no_padding" />
         <!--        <com.github.kr328.clash.design.view.LargeActionLabel-->
         <!--            android:layout_width="match_parent"-->
         <!--            android:layout_height="wrap_content"-->

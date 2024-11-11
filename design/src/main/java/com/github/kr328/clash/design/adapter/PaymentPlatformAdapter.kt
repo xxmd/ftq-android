@@ -43,6 +43,11 @@ class PaymentPlatformAdapter(
         val current = platformList[position]
         holder.actionLabel.text = current.name
         holder.actionLabel.icon = context.getDrawable(R.drawable.ic_image_placeholder)
+        holder.actionLabel.setPadding(0, 40, 0, 40)
+        holder.actionLabel.layoutParams = ViewGroup.LayoutParams(
+            ViewGroup.LayoutParams.MATCH_PARENT,
+            ViewGroup.LayoutParams.WRAP_CONTENT
+        )
         CoroutineScope(Dispatchers.Main).launch {
             val drawable = loadDrawableFromUrl(current.iconUrl)
             if (drawable != null) {

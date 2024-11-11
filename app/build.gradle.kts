@@ -25,6 +25,7 @@ dependencies {
     implementation(libs.google.material)
     implementation(platform("com.google.firebase:firebase-bom:32.8.0"))
     implementation("com.google.firebase:firebase-analytics")
+    implementation ("com.dinuscxj:circleprogressbar:1.3.6")
 }
 
 tasks.getByName("clean", type = Delete::class) {

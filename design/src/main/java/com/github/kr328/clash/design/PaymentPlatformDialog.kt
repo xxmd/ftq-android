@@ -25,30 +25,51 @@ import kotlinx.coroutines.launch
 
 class PaymentPlatformDialog(
     context: Context,
-    onItemClick: (paymentPlatform: PaymentPlatform) -> Unit
+    onItemClick: (dialog: PaymentPlatformDialog, paymentPlatform: PaymentPlatform) -> Unit
 ) : BottomSheetDialog(context) {
 
     private val binding = DialogPaymentPlatformBinding
         .inflate(context.layoutInflater, context.root, false)
-    private val adapter = PaymentPlatformAdapter(context, onItemClick)
+    private val adapter = PaymentPlatformAdapter(context, { item ->
+        onItemClick(this, item)
+    })
 
-    private val skuList: List<Sku> = listOf(
-        Sku(1, 1, 1, ""),
-        Sku(1, 1, 1, ""),
-        Sku(1, 1, 1, ""),
+    private val taobaoSkuList: List<Sku> = listOf(
+        Sku(1, 1, 1, "http://e.tb.cn/h.TZz5gCx?tk=ahaG3JlVcIa"),
+        Sku(1, 1, 1, "http://e.tb.cn/h.TZz5gCx?tk=ahaG3JlVcIa"),
+        Sku(1, 1, 1, "http://e.tb.cn/h.TZz5gCx?tk=ahaG3JlVcIa"),
+    )
+    private val tmallSkuList: List<Sku> = listOf(
+        Sku(1, 1, 1, "https://m.tb.cn/h.TZz8ZL5?tk=gGks3Jl6ude"),
+        Sku(1, 1, 2, "https://m.tb.cn/h.TZz8ZL5?tk=gGks3Jl6ude"),
+        Sku(1, 1, 3, "https://m.tb.cn/h.TZz8ZL5?tk=gGks3Jl6ude"),
+    )
+    private val pinDuoDuoSkuList: List<Sku> = listOf(
+        Sku(1, 1, 1, "https://mobile.yangkeduo.com/goods2.html?ps=MhRjAdwDZQ"),
+        Sku(1, 1, 2, "https://mobile.yangkeduo.com/goods2.html?ps=MhRjAdwDZQ"),
+        Sku(1, 1, 3, "https://mobile.yangkeduo.com/goods2.html?ps=MhRjAdwDZQ"),
     )
     private val _platformList: List<PaymentPlatform> = listOf(
         PaymentPlatform(
             1,
-            "淘宝/天猫",
+            "淘宝",
             "https://wms-file-bucket.oss-cn-hangzhou.aliyuncs.com/taobao.png",
-            skuList
+            "com.taobao.taobao",
+            taobaoSkuList
         ),
         PaymentPlatform(
             2,
+            "天猫",
+            "https://wms-file-bucket.oss-cn-hangzhou.aliyuncs.com/tianmao.png",
+            "com.tmall.wireless",
+            taobaoSkuList
+        ),
+        PaymentPlatform(
+            3,
             "拼多多",
             "https://wms-file-bucket.oss-cn-hangzhou.aliyuncs.com/pdd.png",
-            skuList
+            "com.xunmeng.pinduoduo",
+            pinDuoDuoSkuList
         ),
     )
 

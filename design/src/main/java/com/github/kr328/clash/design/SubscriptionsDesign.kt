@@ -1,9 +1,12 @@
 package com.github.kr328.clash.design
 
 import android.content.Context
+import android.content.Intent
+import android.text.TextUtils
 import android.view.View
 import android.view.ViewGroup
 import com.github.kr328.clash.common.log.Log
+import com.github.kr328.clash.design.ProxyDesign.Request
 import com.github.kr328.clash.design.adapter.SingleSelectAdapter
 import com.github.kr328.clash.design.adapter.SubscriptionAdapter
 import com.github.kr328.clash.design.databinding.DesignSubscriptionsBinding
@@ -29,6 +32,7 @@ import kotlinx.coroutines.withContext
 class SubscriptionsDesign(context: Context) : Design<SubscriptionsDesign.Request>(context),
     SingleSelectAdapter.SingleSelectListener<Subscription> {
     sealed class Request {
+        data class SkipToSkuLink(val paymentPlatform: PaymentPlatform, val sku: Sku) : Request()
     }
 
     private val binding = DesignSubscriptionsBinding
@@ -65,13 +69,19 @@ class SubscriptionsDesign(context: Context) : Design<SubscriptionsDesign.Request
 //        }
     }
 
-    fun onPaymentPlatformConfirm(paymentPlatform: PaymentPlatform) {
-        val sku = paymentPlatform.skuList.find { it.subscriptionId ==  adapter.getSelectedItem()?.id }
-        Log.i(sku.toString())
+    private fun onPaymentPlatformConfirm(
+        dialog: PaymentPlatformDialog,
+        paymentPlatform: PaymentPlatform
+    ) {
+        dialog.dismiss()
+        val sku = paymentPlatform.skuList.find { it.subscriptionId == adapter.getSelectedItem()?.id }
+        if (sku != null && !TextUtils.isEmpty(sku.link)) {
+            requests.trySend(Request.SkipToSkuLink(paymentPlatform, sku))
+        }
     }
 
     fun showPaymentPlatformDialog() {
-        val dialog =PaymentPlatformDialog(context, this::onPaymentPlatformConfirm)
+        val dialog = PaymentPlatformDialog(context, this::onPaymentPlatformConfirm)
         dialog.show()
     }
 

@@ -15,5 +15,6 @@ data class PaymentPlatform(
     val id: Int,
     val name: String,
     val iconUrl: String,
+    val packageName: String,
     val skuList: List<Sku>,
 )
