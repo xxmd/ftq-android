@@ -25,7 +25,10 @@ dependencies {
     implementation(libs.google.material)
     implementation(platform("com.google.firebase:firebase-bom:32.8.0"))
     implementation("com.google.firebase:firebase-analytics")
-    implementation ("com.dinuscxj:circleprogressbar:1.3.6")
+//    implementation ("com.dinuscxj:circleprogressbar:1.3.6")
+    implementation ("com.github.bumptech.glide:glide:4.15.1")  // Glide 库
+    annotationProcessor ("com.github.bumptech.glide:compiler:4.15.1")  // Glide 注解处理器
+    implementation ("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
 }
 
 tasks.getByName("clean", type = Delete::class) {

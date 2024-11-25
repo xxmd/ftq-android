@@ -16,7 +16,7 @@
         android:paddingEnd="@{self.surface.insets.end}">
 
         <LinearLayout
-            android:paddingTop="@{self.surface.insets.top}"
+            android:paddingTop="@{(float)self.surface.insets.top + @dimen/toolbar_height}"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">

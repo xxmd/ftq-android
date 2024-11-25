@@ -31,8 +31,16 @@ import kotlinx.coroutines.withContext
 
 class SubscriptionsDesign(context: Context) : Design<SubscriptionsDesign.Request>(context),
     SingleSelectAdapter.SingleSelectListener<Subscription> {
+
     sealed class Request {
-        data class SkipToSkuLink(val paymentPlatform: PaymentPlatform, val sku: Sku) : Request()
+        /**
+         * 买哪个订阅套餐，去哪个平台购买，对应平台上哪个 sku
+         */
+        data class onOrderConfirm(
+            val subscription: Subscription,
+            val paymentPlatform: PaymentPlatform,
+            val sku: Sku
+        ) : Request()
     }
 
     private val binding = DesignSubscriptionsBinding
@@ -73,10 +81,15 @@ class SubscriptionsDesign(context: Context) : Design<SubscriptionsDesign.Request
         dialog: PaymentPlatformDialog,
         paymentPlatform: PaymentPlatform
     ) {
+        Log.i("dialog.dismiss()")
         dialog.dismiss()
-        val sku = paymentPlatform.skuList.find { it.subscriptionId == adapter.getSelectedItem()?.id }
-        if (sku != null && !TextUtils.isEmpty(sku.link)) {
-            requests.trySend(Request.SkipToSkuLink(paymentPlatform, sku))
+        val selectedSubscription = adapter.getSelectedItem()
+        if (selectedSubscription != null) {
+            val sku = paymentPlatform.skuList.find { it.subscriptionId == selectedSubscription.id }
+            if (sku != null && !TextUtils.isEmpty(sku.link)) {
+                Log.i("trySend onOrderConfirm")
+                requests.trySend(Request.onOrderConfirm(selectedSubscription, paymentPlatform, sku))
+            }
         }
     }
 

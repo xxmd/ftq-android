@@ -16,7 +16,8 @@ import java.util.concurrent.TimeUnit
 
 class WaitPaymentActivity : BaseActivity<WaitPaymentDesign>() {
     companion object {
-        val EXTRA_PACKAGE_NAME = "EXTRA_PACKAGE_NAME"
+        val EXTRA_SUBSCRIPTION = "EXTRA_SUBSCRIPTION"
+        val EXTRA_PAYMENT_PLATFORM = "EXTRA_PAYMENT_PLATFORM"
         val EXTRA_SKU = "EXTRA_SKU"
     }
 
@@ -25,11 +26,9 @@ class WaitPaymentActivity : BaseActivity<WaitPaymentDesign>() {
 
         setContentDesign(design)
 
-        val packageName = intent.getStringExtra(EXTRA_PACKAGE_NAME)
-        val sku = intent.getParcelableExtra<Sku>(EXTRA_SKU)
-        if (packageName != null && sku != null) {
-            skipBySkuLink(packageName, sku.link)
-        }
+//        if (packageName != null && sku != null) {
+//            skipBySkuLink(packageName, sku.link)
+//        }
         while (isActive) {
             select<Unit> {
                 events.onReceive {

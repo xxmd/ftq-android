@@ -49,4 +49,14 @@
         <attr name="android:background" />
         <attr name="android:foreground" />
     </declare-styleable>
+
+    <declare-styleable name="CellView">
+        <attr name="label" format="string"/>
+        <attr name="value" format="string"/>
+        <attr name="iconUrl" format="string"/>
+    </declare-styleable>
+
+    <declare-styleable name="CellGroup">
+        <attr name="title"/>
+    </declare-styleable>
 </resources>

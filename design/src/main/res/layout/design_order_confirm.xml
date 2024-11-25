@@ -1,0 +1,92 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable
+            name="self"
+            type="com.github.kr328.clash.design.OrderConfirmDesign" />
+        <variable
+            name="subscription"
+            type="com.github.kr328.clash.service.model.Subscription" />
+        <variable
+            name="paymentPlatform"
+            type="com.github.kr328.clash.service.model.PaymentPlatform" />
+        <variable
+            name="sku"
+            type="com.github.kr328.clash.service.model.Sku" />
+
+        <import type="android.view.View" />
+    </data>
+
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:paddingStart="@{self.surface.insets.start}"
+        android:paddingEnd="@{self.surface.insets.end}">
+
+        <RelativeLayout
+            android:paddingHorizontal="16dp"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:paddingTop="@{(float) self.surface.insets.top + @dimen/toolbar_height}"
+            android:paddingBottom="@{self.surface.insets.bottom}">
+
+            <com.github.kr328.clash.design.view.CellGroup
+                android:layout_width="match_parent"
+                android:layout_margin="1dp"
+                android:layout_height="wrap_content">
+
+                <com.github.kr328.clash.design.view.CellView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:label="套餐名称"
+                    app:value="@{subscription.name}" />
+
+                <com.github.kr328.clash.design.view.CellView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:label="套餐价格"
+                    app:value='@{String.format("%.2f元", subscription.price)}' />
+
+                <com.github.kr328.clash.design.view.CellView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:iconUrl="@{paymentPlatform.iconUrl}"
+                    app:label="付款平台"
+                    app:value="@{paymentPlatform.name}" />
+            </com.github.kr328.clash.design.view.CellGroup>
+
+            <Button
+                android:onClick="@{() -> self.onConfirm()}"
+                android:id="@+id/btn_confirm"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:paddingVertical="20dp"
+                android:text="确认"
+                android:textSize="18sp" />
+        </RelativeLayout>
+
+        <com.github.kr328.clash.design.view.ActivityBarLayout
+            android:id="@+id/activity_bar_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:paddingTop="@{self.surface.insets.top}">
+
+            <RelativeLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingEnd="@dimen/item_tailing_margin">
+
+                <include
+                    layout="@layout/common_activity_bar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentStart="true"
+                    android:layout_centerVertical="true"
+                    android:layout_toStartOf="@id/update_layout" />
+
+            </RelativeLayout>
+        </com.github.kr328.clash.design.view.ActivityBarLayout>
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
+</layout>

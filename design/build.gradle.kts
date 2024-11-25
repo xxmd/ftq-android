@@ -18,4 +18,7 @@ dependencies {
     implementation(libs.androidx.fragment)
     implementation(libs.androidx.viewpager)
     implementation(libs.google.material)
+
+    implementation ("com.github.bumptech.glide:glide:4.15.1")  // Glide 库
+    annotationProcessor ("com.github.bumptech.glide:compiler:4.15.1")  // Glide 注解处理器
 }

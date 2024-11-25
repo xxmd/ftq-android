@@ -41,6 +41,7 @@ dependencies {
     implementation(libs.androidx.core)
     implementation(libs.kotlin.coroutine)
     implementation(libs.kotlin.serialization.json)
+    implementation ("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
 }
 
 afterEvaluate {

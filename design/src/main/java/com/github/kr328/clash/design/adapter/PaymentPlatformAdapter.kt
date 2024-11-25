@@ -4,6 +4,9 @@ import android.content.Context
 import android.graphics.drawable.Drawable
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.Glide
+import com.bumptech.glide.request.target.SimpleTarget
+import com.bumptech.glide.request.transition.Transition
 import com.github.kr328.clash.common.log.Log
 import com.github.kr328.clash.design.R
 import com.github.kr328.clash.design.databinding.AdapterProfileBinding
@@ -48,12 +51,21 @@ class PaymentPlatformAdapter(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.WRAP_CONTENT
         )
-        CoroutineScope(Dispatchers.Main).launch {
-            val drawable = loadDrawableFromUrl(current.iconUrl)
-            if (drawable != null) {
-                holder.actionLabel.icon = drawable
-            }
-        }
+        Glide.with(holder.itemView.context)
+            .load(current.iconUrl)
+            .placeholder(R.drawable.ic_image_placeholder)
+            .into(object : SimpleTarget<Drawable>() {
+                override fun onResourceReady(resource: Drawable, transition: Transition<in Drawable>?) {
+                    // 设置图片作为背景
+                    holder.actionLabel.icon = resource
+                }
+            })
+//        CoroutineScope(Dispatchers.Main).launch {
+//            val drawable = loadDrawableFromUrl(current.iconUrl)
+//            if (drawable != null) {
+//                holder.actionLabel.icon = drawable
+//            }
+//        }
         holder.itemView.setOnClickListener {
             onItemClick(current)
         }
