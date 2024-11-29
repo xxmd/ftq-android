@@ -51,12 +51,23 @@
     </declare-styleable>
 
     <declare-styleable name="CellView">
-        <attr name="label" format="string"/>
-        <attr name="value" format="string"/>
-        <attr name="iconUrl" format="string"/>
+        <attr name="label" format="string" />
+        <attr name="value" format="string" />
+        <attr name="iconUrl" format="string" />
     </declare-styleable>
 
     <declare-styleable name="CellGroup">
-        <attr name="title"/>
+        <attr name="title" />
     </declare-styleable>
+
+    <declare-styleable name="OnlyReadEditText">
+        <attr name="text" />
+        <attr name="hint" format="string" />
+    </declare-styleable>
+
+    <declare-styleable name="FAQView">
+        <attr name="question" format="string" />
+        <attr name="answer" format="string" />
+    </declare-styleable>
+
 </resources>

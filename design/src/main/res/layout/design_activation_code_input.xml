@@ -15,12 +15,15 @@
         android:paddingStart="@{self.surface.insets.start}"
         android:paddingEnd="@{self.surface.insets.end}">
 
-        <RelativeLayout
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:divider="@drawable/divider_height_15"
+            android:orientation="vertical"
             android:paddingHorizontal="@dimen/container_horizon_padding"
             android:paddingTop="@{(float) self.surface.insets.top + @dimen/toolbar_height}"
-            android:paddingBottom="@{self.surface.insets.bottom}">
+            android:paddingBottom="@{self.surface.insets.bottom}"
+            android:showDividers="middle">
 
             <com.google.android.material.textfield.TextInputLayout
                 android:id="@+id/text_layout"
@@ -30,22 +33,46 @@
                 app:errorEnabled="true">
 
                 <com.google.android.material.textfield.TextInputEditText
-                    android:hint="请输入激活码"
                     android:id="@+id/text_field"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content" />
+                    android:layout_height="wrap_content"
+                    android:hint="请输入激活码" />
             </com.google.android.material.textfield.TextInputLayout>
 
-            <Button
+            <com.github.kr328.clash.design.view.ActionButton
                 android:id="@+id/btn_confirm"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true"
+                android:enabled="false"
                 android:onClick="@{() -> self.onConfirm()}"
-                android:paddingVertical="20dp"
-                android:text="确认"
-                android:textSize="18sp" />
-        </RelativeLayout>
+                android:text="确认" />
+
+            <com.github.kr328.clash.design.view.CellGroup
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="@dimen/cell_group_margin"
+                app:title="常见问题">
+
+                <com.github.kr328.clash.design.view.FAQView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:answer="通过电商平台购买对应商品自动发送激活码"
+                    app:question="1. 如何获取激活码" />
+
+                <com.github.kr328.clash.design.view.FAQView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:answer="目前仅支持在单台设备上激活一次"
+                    app:question="2. 一个激活码是否可以激活多次" />
+
+                <com.github.kr328.clash.design.view.FAQView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    app:answer="新有效天数 = 之前剩余天数 + 本次激活天数"
+                    app:question="3. 激活后有效天数如何计算" />
+
+            </com.github.kr328.clash.design.view.CellGroup>
+        </LinearLayout>
 
         <com.github.kr328.clash.design.view.ActivityBarLayout
             android:id="@+id/activity_bar_layout"

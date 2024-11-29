@@ -26,12 +26,11 @@
                 layout="@layout/common_recycler_list"
                 app:insets="@{self.surface.insets}" />
 
-            <Button
+            <com.github.kr328.clash.design.view.ActionButton
                 android:onClick="@{() -> self.showPaymentPlatformDialog()}"
                 android:id="@+id/btn_confirm"
                 android:layout_marginHorizontal="15dp"
                 android:layout_alignParentBottom="true"
-                android:textSize="18sp"
                 android:text="确认"
                 android:paddingVertical="20dp"
                 android:layout_width="match_parent"

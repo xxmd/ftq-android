@@ -37,6 +37,7 @@ class OrderConfirmDesign(context: Context) : Design<OrderConfirmDesign.Request>(
 
     sealed class Request {
         object OnConfirm : Request()
+        object ToActivationCodeInputPage : Request()
     }
 
     val binding = DesignOrderConfirmBinding
@@ -52,5 +53,9 @@ class OrderConfirmDesign(context: Context) : Design<OrderConfirmDesign.Request>(
 
     fun onConfirm() {
         requests.trySend(Request.OnConfirm)
+    }
+
+    fun toActivationCodeInputPage() {
+        requests.trySend(Request.ToActivationCodeInputPage)
     }
 }

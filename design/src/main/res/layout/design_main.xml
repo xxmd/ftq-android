@@ -63,11 +63,11 @@
                         android:layout_width="@dimen/large_item_header_layout_size"
                         android:layout_height="@dimen/large_item_header_layout_size">
 
-                        <ImageView
-                            android:layout_width="@dimen/main_logo_size"
-                            android:layout_height="@dimen/main_logo_size"
-                            android:layout_gravity="center"
-                            android:src="@drawable/favicon" />
+<!--                        <ImageView-->
+<!--                            android:layout_width="@dimen/main_logo_size"-->
+<!--                            android:layout_height="@dimen/main_logo_size"-->
+<!--                            android:layout_gravity="center"-->
+<!--                            android:src="@drawable/favicon" />-->
                     </FrameLayout>
 
                     <TextView
@@ -107,11 +107,9 @@
                     app:subtext="@string/qq_group_account"
                     app:text="佛跳墙 QQ 售后群" />
 
-                <Button
+                <com.github.kr328.clash.design.view.ActionButton
                     android:onClick="@{() -> self.request(Request.PURCHASE)}"
-                    android:textSize="18sp"
                     android:text="立即购买"
-                    android:paddingVertical="20dp"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"/>
                 <!--                <com.github.kr328.clash.design.view.LargeActionCard-->

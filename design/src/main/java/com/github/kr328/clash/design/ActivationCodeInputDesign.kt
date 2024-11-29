@@ -35,7 +35,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import kotlinx.coroutines.withContext
 
-class ActivationCodeInputDesign(context: Context) : Design<ActivationCodeInputDesign.Request>(context) {
+class ActivationCodeInputDesign(context: Context) :
+    Design<ActivationCodeInputDesign.Request>(context) {
 
     sealed class Request {
         object OnConfirm : Request()
@@ -44,6 +45,8 @@ class ActivationCodeInputDesign(context: Context) : Design<ActivationCodeInputDe
     val binding = DesignActivationCodeInputBinding
         .inflate(context.layoutInflater, context.root, false)
 
+    val errorMessage = "激活码格式错误"
+
     override val root: View
         get() = binding.root
 
@@ -51,19 +54,15 @@ class ActivationCodeInputDesign(context: Context) : Design<ActivationCodeInputDe
         binding.self = this
         binding.activityBarLayout.applyFrom(context)
         binding.textField.apply {
-            binding.textLayout.isErrorEnabled = error != null
+            binding.textLayout.isErrorEnabled = errorMessage != null
 
             doOnTextChanged { text, _, _, _ ->
-                if (!ValidatorUUIDString(text?.toString() ?: "")) {
-                    if (error != null)
-                        binding.textLayout.error = error
-
-//                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = false
+                if (ValidatorUUIDString(text?.toString() ?: "")) {
+                    binding.textLayout.error = null
+                    binding.btnConfirm.isEnabled = true
                 } else {
-                    if (error != null)
-                        binding.textLayout.error = null
-
-//                    dialog.getButton(AlertDialog.BUTTON_POSITIVE).isEnabled = true
+                    binding.textLayout.error = errorMessage
+                    binding.btnConfirm.isEnabled = false
                 }
             }
 

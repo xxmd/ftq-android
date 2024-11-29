@@ -1,7 +1,6 @@
 package com.github.kr328.clash
 
 import com.github.kr328.clash.design.ActivationCodeInputDesign
-import com.github.kr328.clash.design.OrderConfirmDesign
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.selects.select
 

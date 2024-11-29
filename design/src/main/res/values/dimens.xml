@@ -45,6 +45,7 @@
     <dimen name="item_padding_vertical">16dp</dimen>
     <dimen name="item_text_margin">5dp</dimen>
     <dimen name="item_midden_margin">10dp</dimen>
+    <dimen name="item_top_margin">10dp</dimen>
 
     <!-- Large Card -->
     <dimen name="large_action_card_radius">8dp</dimen>
