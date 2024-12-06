@@ -5,11 +5,16 @@ import kotlinx.serialization.Serializable
 import java.util.Date
 
 @Serializable
-data class ActivationCode(
-    val id: Int,
-    val content: String,
-    val activationDays: Int,
-    val  subscriptionId: Int,
-    @Contextual val exportTime: Date,
-    @Contextual val activateTime: Date
-)
+class ActivationCode : BaseEntity() {
+    var content: String = ""
+    var activationDays: Int = 0
+    var subscriptionId: Int = 0
+    lateinit var subscription: Subscription
+
+    @Contextual
+    lateinit var exportTime: Date
+
+    @Contextual
+    lateinit var activateTime: Date
+    var activationRecord: ActivationRecord? = null
+}

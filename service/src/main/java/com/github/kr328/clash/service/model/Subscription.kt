@@ -1,12 +1,11 @@
-
 package com.github.kr328.clash.service.model
 
 import kotlinx.serialization.Serializable
+import kotlin.properties.Delegates
 
 @Serializable
-data class Subscription(
-    val id: Int,
-    val name: String,
-    val price: Double,
-    val activationDays: Int,
-)
+class Subscription : BaseEntity() {
+    lateinit var name: String
+    var price by Delegates.notNull<Double>()
+    var activationDays by Delegates.notNull<Int>()
+}

@@ -1,5 +1,6 @@
 package com.github.kr328.clash.common.store
 
+import java.util.Date
 import kotlin.reflect.KProperty
 
 class Store(val provider: StoreProvider) {
@@ -92,6 +93,19 @@ class Store(val provider: StoreProvider) {
 
             override fun setValue(thisRef: Any?, property: KProperty<*>, value: T?) {
                 provider.setString(key, to(value))
+            }
+        }
+    }
+
+    fun date(key: String, defaultValue: Date): Delegate<Date> {
+        return object : Delegate<Date> {
+            override fun getValue(thisRef: Any?, property: KProperty<*>): Date {
+                val timestamp = provider.getLong(key, defaultValue.time)
+                return Date(timestamp)
+            }
+
+            override fun setValue(thisRef: Any?, property: KProperty<*>, value: Date) {
+                provider.setLong(key, value.time)
             }
         }
     }

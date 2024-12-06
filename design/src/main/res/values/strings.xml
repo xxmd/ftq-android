@@ -321,4 +321,5 @@
     <string name="force_dns_mapping">Force DNS Mapping</string>
     <string name="parse_pure_ip">Parse Pure IP</string>
     <string name="override_destination">Override Destination</string>
+    <string name="activation_code_validate_error">激活码验证失败</string>
 </resources>

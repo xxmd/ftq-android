@@ -19,6 +19,7 @@ import com.github.kr328.clash.design.util.bindAppBarElevation
 import com.github.kr328.clash.design.util.layoutInflater
 import com.github.kr328.clash.design.util.patchDataSet
 import com.github.kr328.clash.design.util.root
+import com.github.kr328.clash.service.model.BaseEntity
 import com.github.kr328.clash.service.model.PaymentPlatform
 import com.github.kr328.clash.service.model.Profile
 import com.github.kr328.clash.service.model.Sku
@@ -48,9 +49,9 @@ class SubscriptionsDesign(context: Context) : Design<SubscriptionsDesign.Request
     private val adapter = SubscriptionAdapter(context)
 
     private val subscriptionList: List<Subscription> = listOf(
-        Subscription(1, "包天套餐", 1.00, 1),
-        Subscription(2, "包月套餐", 10.00, 30),
-        Subscription(3, "包年套餐", 50.00, 365),
+//        Subscription(1, "包天套餐", 1.00, 1),
+//        Subscription(2, "包月套餐", 10.00, 30),
+//        Subscription(3, "包年套餐", 50.00, 365),
     )
 
     override val root: View

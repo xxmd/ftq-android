@@ -60,4 +60,9 @@ class ServiceStore(context: Context) {
         key = "sideload_geoip",
         defaultValue = ""
     )
+
+    var expirationDate by store.date(
+        key = "expiration_date",
+        defaultValue = Date()
+    )
 }

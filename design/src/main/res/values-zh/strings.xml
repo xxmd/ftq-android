@@ -245,6 +245,7 @@
     <string name="import_country_file">导入 Country 数据库</string>
     <string name="geofile_import_failed">导入失败</string>
     <string name="geofile_unknown_db_format">数据库类型错误</string>
+    <string name="activation_code_validate_error">激活码验证失败</string>
     <string name="geofile_unknown_db_format_message">只支持 %1$s 格式的Geo数据库</string>
     <string name="geofile_imported">%1$s 已导入</string>
     <string name="toast_profile_updated_complete">更新配置 %s 成功</string>
