@@ -165,13 +165,6 @@ class ActivationCodeInputDesign(context: Context) :
     fun onConfirm() {
         val content = binding.textField.text!!.trim().toString()
         val activationCode = queryActivationCode(content)
-        if (activationCode == null) {
-            showCodeNotExistDialog()
-        } else if (activationCode.activationRecord != null) {
-            showCodeBeUsedDialog(activationCode.activationRecord!!)
-        } else {
-            showCodeConfirmDialog(activationCode)
-        }
         /**
          * 发起请求查询该激活码状态
          * 1. 该激活码不存在
@@ -179,6 +172,13 @@ class ActivationCodeInputDesign(context: Context) :
          *  2.1 存在激活记录，即已经被其他设备使用
          *  2.2 没有激活记录，是一个全新的激活码
          */
+        if (activationCode == null) {
+            showCodeNotExistDialog()
+        } else if (activationCode.activationRecord != null) {
+            showCodeBeUsedDialog(activationCode.activationRecord!!)
+        } else {
+            showCodeConfirmDialog(activationCode)
+        }
 
         requests.trySend(Request.OnConfirm)
     }
