@@ -23,12 +23,11 @@ dependencies {
     implementation(libs.androidx.coordinator)
     implementation(libs.androidx.recyclerview)
     implementation(libs.google.material)
-    implementation(platform("com.google.firebase:firebase-bom:32.8.0"))
-    implementation("com.google.firebase:firebase-analytics")
-//    implementation ("com.dinuscxj:circleprogressbar:1.3.6")
+//    implementation(platform("com.google.firebase:firebase-bom:32.8.0"))
+//    implementation("com.google.firebase:firebase-analytics")
     implementation ("com.github.bumptech.glide:glide:4.15.1")  // Glide 库
     annotationProcessor ("com.github.bumptech.glide:compiler:4.15.1")  // Glide 注解处理器
-    implementation ("org.jetbrains.kotlinx:kotlinx-serialization-json:1.6.0")
+    implementation ("com.google.code.gson:gson:2.8.8")
 }
 
 tasks.getByName("clean", type = Delete::class) {
@@ -46,15 +45,15 @@ task("downloadGeoFiles") {
     )
 
     doLast {
-//        geoFilesUrls.forEach { (downloadUrl, outputFileName) ->
-//            val url = URL(downloadUrl)
-//            val outputPath = file("$geoFilesDownloadDir/$outputFileName")
-//            outputPath.parentFile.mkdirs()
-//            url.openStream().use { input ->
-//                Files.copy(input, outputPath.toPath(), StandardCopyOption.REPLACE_EXISTING)
-//                println("$outputFileName downloaded to $outputPath")
-//            }
-//        }
+        geoFilesUrls.forEach { (downloadUrl, outputFileName) ->
+            val url = URL(downloadUrl)
+            val outputPath = file("$geoFilesDownloadDir/$outputFileName")
+            outputPath.parentFile.mkdirs()
+            url.openStream().use { input ->
+                Files.copy(input, outputPath.toPath(), StandardCopyOption.REPLACE_EXISTING)
+                println("$outputFileName downloaded to $outputPath")
+            }
+        }
     }
 }
 
@@ -63,7 +62,7 @@ afterEvaluate {
 
     tasks.forEach {
         if (it.name.startsWith("assemble")) {
-            it.dependsOn(downloadGeoFilesTask)
+//            it.dependsOn(downloadGeoFilesTask)
         }
     }
 }

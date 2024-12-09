@@ -34,6 +34,7 @@
             android:name=".ProfileWorker"
             android:exported="false"
             android:process=":background" />
+        <service android:name=".ExpirationMonitorService" />
 
         <provider
             android:name=".FilesProvider"

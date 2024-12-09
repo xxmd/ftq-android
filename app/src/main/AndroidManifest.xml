@@ -18,7 +18,6 @@
         tools:ignore="QueryAllPackagesPermission" />
 
     <application
-        tools:replace="android:fullBackupContent"
         android:name=".MainApplication"
         android:allowBackup="true"
         android:banner="@mipmap/ic_banner"
@@ -30,6 +29,7 @@
         android:supportsRtl="true"
         android:theme="@style/BootstrapTheme"
         tools:ignore="GoogleAppIndexingWarning"
+        tools:replace="android:fullBackupContent"
         tools:targetApi="N">
 
         <meta-data
@@ -40,7 +40,7 @@
             android:value="@integer/release_code" />
 
         <activity
-            android:name=".ActivationCodeInputActivity"
+            android:name=".MainActivity"
             android:configChanges="uiMode"
             android:exported="true"
             android:label="@string/launch_name"
@@ -69,9 +69,9 @@
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
 
-                <data android:scheme="clash"/>
-                <data android:scheme="clashmeta"/>
-                <data android:host="install-config"/>
+                <data android:scheme="clash" />
+                <data android:scheme="clashmeta" />
+                <data android:host="install-config" />
             </intent-filter>
             <intent-filter>
                 <action android:name="com.github.metacubex.clash.meta.action.START_CLASH" />
@@ -172,10 +172,18 @@
             android:configChanges="uiMode"
             android:exported="false"
             android:label="@string/files" />
-        <activity android:name=".SubscriptionsActivity" android:label="套餐购买" />
-        <activity android:name=".WaitPaymentActivity" android:label="付款确认"/>
-        <activity android:name=".OrderConfirmActivity" android:label="订单确认" />
-<!--        <activity android:name=".ActivationCodeInputActivity" android:label="激活码输入" />-->
+        <activity
+            android:name=".SubscriptionsActivity"
+            android:label="套餐购买" />
+        <activity
+            android:name=".WaitPaymentActivity"
+            android:label="付款确认" />
+        <activity
+            android:name=".OrderConfirmActivity"
+            android:label="订单确认" />
+        <activity
+            android:name=".ActivationCodeInputActivity"
+            android:label="激活码输入" />
 
         <service
             android:name=".LogcatService"

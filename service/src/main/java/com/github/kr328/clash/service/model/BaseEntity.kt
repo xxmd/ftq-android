@@ -3,14 +3,15 @@ package com.github.kr328.clash.service.model
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 import java.util.Date
+import kotlin.random.Random
 
 @Serializable
 open class BaseEntity {
-    var id: Int = 0
+    var id: Int = Random.nextInt(1, Int.MAX_VALUE)
 
     @Contextual
-    lateinit var createTime: Date
+    var createTime: Date = Date()
 
     @Contextual
-    lateinit var updateTime: Date
+    var updateTime: Date = Date()
 }

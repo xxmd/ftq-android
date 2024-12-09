@@ -63,11 +63,11 @@
                         android:layout_width="@dimen/large_item_header_layout_size"
                         android:layout_height="@dimen/large_item_header_layout_size">
 
-<!--                        <ImageView-->
-<!--                            android:layout_width="@dimen/main_logo_size"-->
-<!--                            android:layout_height="@dimen/main_logo_size"-->
-<!--                            android:layout_gravity="center"-->
-<!--                            android:src="@drawable/favicon" />-->
+                        <ImageView
+                            android:layout_width="@dimen/main_logo_size"
+                            android:layout_height="@dimen/main_logo_size"
+                            android:layout_gravity="center"
+                            android:src="@drawable/favicon" />
                     </FrameLayout>
 
                     <TextView
@@ -89,10 +89,11 @@
                     app:text="@{clashRunning ? @string/running : @string/stopped}" />
 
                 <com.github.kr328.clash.design.view.LargeActionCard
+                    android:id="@+id/tv_expiration"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginVertical="@dimen/main_card_margin_vertical"
-                    android:onClick="@{() -> self.request(Request.CopyQQGroupCount)}"
+                    android:onClick="@{() -> self.request(Request.PURCHASE)}"
                     app:icon="@drawable/timer"
                     app:subtext="有效期至: 2024/10/21 18:17:20"
                     app:text="剩余天数: 0 天" />
@@ -108,6 +109,7 @@
                     app:text="佛跳墙 QQ 售后群" />
 
                 <com.github.kr328.clash.design.view.ActionButton
+                    android:layout_marginTop="10dp"
                     android:onClick="@{() -> self.request(Request.PURCHASE)}"
                     android:text="立即购买"
                     android:layout_width="match_parent"

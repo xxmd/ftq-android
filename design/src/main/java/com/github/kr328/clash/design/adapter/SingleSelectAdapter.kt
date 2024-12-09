@@ -32,7 +32,7 @@ abstract class SingleSelectAdapter<T, VH : RecyclerView.ViewHolder>(
         if (index in itemList.indices) {
             setSelectedPosition(index)
         } else {
-            throw IllegalArgumentException()
+//            throw IllegalArgumentException()
         }
     }
 

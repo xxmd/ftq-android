@@ -143,7 +143,6 @@ class ActivationCodeInputDesign(context: Context) :
             )
             .setPositiveButton(R.string.ok) { _, _ ->
                 addExpirationDate(activationCode.activationDays)
-
             }
             .show()
     }
@@ -191,9 +190,9 @@ class ActivationCodeInputDesign(context: Context) :
 
     fun queryActivationCode(codeContent: String): ActivationCode? {
         val activationCode = ActivationCode()
-        activationCode.activationDays = 30
-        activationCode.subscription = Subscription()
-        activationCode.subscription.name = "包月套餐"
+//        activationCode.activationDays = 30
+//        activationCode.subscription = Subscription()
+//        activationCode.subscription.name = "包月套餐"
         return activationCode
     }
 }

@@ -22,6 +22,7 @@ import com.github.kr328.clash.design.util.root
 import com.github.kr328.clash.service.model.BaseEntity
 import com.github.kr328.clash.service.model.PaymentPlatform
 import com.github.kr328.clash.service.model.Profile
+import com.github.kr328.clash.service.model.PurchasePlan
 import com.github.kr328.clash.service.model.Sku
 import com.github.kr328.clash.service.model.Subscription
 import kotlinx.coroutines.CoroutineScope
@@ -37,11 +38,7 @@ class SubscriptionsDesign(context: Context) : Design<SubscriptionsDesign.Request
         /**
          * 买哪个订阅套餐，去哪个平台购买，对应平台上哪个 sku
          */
-        data class onOrderConfirm(
-            val subscription: Subscription,
-            val paymentPlatform: PaymentPlatform,
-            val sku: Sku
-        ) : Request()
+        data class OnOrderConfirm(val purchasePlan: PurchasePlan) : Request()
     }
 
     private val binding = DesignSubscriptionsBinding
@@ -49,9 +46,9 @@ class SubscriptionsDesign(context: Context) : Design<SubscriptionsDesign.Request
     private val adapter = SubscriptionAdapter(context)
 
     private val subscriptionList: List<Subscription> = listOf(
-//        Subscription(1, "包天套餐", 1.00, 1),
-//        Subscription(2, "包月套餐", 10.00, 30),
-//        Subscription(3, "包年套餐", 50.00, 365),
+        Subscription("包天套餐", 1.00, 1),
+        Subscription("包月套餐", 10.00, 30),
+        Subscription("包年套餐", 50.00, 365),
     )
 
     override val root: View
@@ -70,35 +67,33 @@ class SubscriptionsDesign(context: Context) : Design<SubscriptionsDesign.Request
         adapter.setSingleSelectListener(this)
         adapter.itemList = subscriptionList
         adapter.selectByIndex(0)
-
-//        CoroutineScope(Dispatchers.Main).launch {
-//            adapter.apply {
-//                patchDataSet(this::subscriptionList, _subscriptionList, id = { it.id })
-//            }
-//        }
     }
 
     private fun onPaymentPlatformConfirm(
         dialog: PaymentPlatformDialog,
         paymentPlatform: PaymentPlatform
     ) {
-        Log.i("dialog.dismiss()")
         dialog.dismiss()
         val selectedSubscription = adapter.getSelectedItem()
         if (selectedSubscription != null) {
-            val sku = paymentPlatform.skuList.find { it.subscriptionId == selectedSubscription.id }
+            val sku = paymentPlatform.skuList[0]
             if (sku != null && !TextUtils.isEmpty(sku.link)) {
-                Log.i("trySend onOrderConfirm")
-                requests.trySend(Request.onOrderConfirm(selectedSubscription, paymentPlatform, sku))
+                requests.trySend(Request.OnOrderConfirm(PurchasePlan(selectedSubscription, paymentPlatform, sku)))
             }
         }
     }
 
+    /**
+     * 展示付款平台选择弹窗
+     */
     fun showPaymentPlatformDialog() {
         val dialog = PaymentPlatformDialog(context, this::onPaymentPlatformConfirm)
         dialog.show()
     }
 
+    /**
+     * 当选中套餐时更新按钮价格
+     */
     override fun onSelectItemChange(oldItem: Subscription?, newItem: Subscription) {
         binding.btnConfirm.text = String.format("确认（%.2f元）", newItem.price)
     }

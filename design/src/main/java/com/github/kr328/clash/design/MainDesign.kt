@@ -6,7 +6,7 @@ import android.content.Context
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.getSystemService
-import com.github.kr328.clash.common.log.Log
+import com.github.kr328.clash.common.util.format
 import com.github.kr328.clash.core.model.FetchStatus
 import com.github.kr328.clash.core.model.TunnelState
 import com.github.kr328.clash.core.util.trafficTotal
@@ -18,8 +18,12 @@ import com.github.kr328.clash.design.ui.ToastDuration
 import com.github.kr328.clash.design.util.layoutInflater
 import com.github.kr328.clash.design.util.resolveThemedColor
 import com.github.kr328.clash.design.util.root
+import com.github.kr328.clash.service.store.ServiceStore
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.util.*
 
 class MainDesign(context: Context) : Design<MainDesign.Request>(context) {
     enum class Request {
@@ -34,6 +38,8 @@ class MainDesign(context: Context) : Design<MainDesign.Request>(context) {
         CopyQQGroupCount,
         PURCHASE,
     }
+
+    val service = ServiceStore(context)
 
     private val binding = DesignMainBinding
         .inflate(context.layoutInflater, context.root, false)
@@ -93,6 +99,38 @@ class MainDesign(context: Context) : Design<MainDesign.Request>(context) {
 
         binding.colorClashStarted = context.resolveThemedColor(R.attr.colorPrimary)
         binding.colorClashStopped = context.resolveThemedColor(R.attr.colorClashStopped)
+        updateExpiration()
+    }
+
+    fun updateExpiration() {
+        val (remainTime, hasRemaining) = computeRemain()
+        binding.tvExpiration.text = String.format("剩余时间: %s", remainTime)
+        binding.tvExpiration.subtext =
+            String.format("有效期至: %s", service.expirationDate.format())
+        if (!hasRemaining) {
+            GlobalScope.launch(Dispatchers.Main) {
+                showToast("您的使用有效期不足，请尽快充值", ToastDuration.Indefinite) {
+                    setAction(R.string.ok) {
+                        requests.trySend(Request.PURCHASE)
+                    }
+                }
+            }
+        }
+    }
+
+    private fun computeRemain(): Pair<String, Boolean> {
+        val remainMillis = service.expirationDate.time - Date().time
+        if (remainMillis <= 0) {
+            return Pair("0 小时", false)  // 如果过期，返回 0 天 0 小时
+        }
+
+        // 计算剩余天数
+        val remainDays = (remainMillis / (1000 * 60 * 60 * 24)).toInt()
+
+        // 计算剩余小时数
+        val remainHours = ((remainMillis % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toInt()
+
+        return Pair("$remainDays 天 $remainHours 小时", true)
     }
 
     fun request(request: Request) {
@@ -123,12 +161,14 @@ class MainDesign(context: Context) : Design<MainDesign.Request>(context) {
                 text = context.getString(R.string.format_fetching_configuration, status.args[0])
                 isIndeterminate = true
             }
+
             FetchStatus.Action.FetchProviders -> {
                 text = context.getString(R.string.format_fetching_provider, status.args[0])
                 isIndeterminate = false
                 max = status.max
                 progress = status.progress
             }
+
             FetchStatus.Action.Verifying -> {
                 text = context.getString(R.string.verifying)
                 isIndeterminate = false
@@ -138,8 +178,9 @@ class MainDesign(context: Context) : Design<MainDesign.Request>(context) {
         }
     }
 
-     suspend fun copyQQGroupCount() {
-        val data = ClipData.newPlainText("QQGroupCount", context.getString(R.string.qq_group_account))
+    suspend fun copyQQGroupCount() {
+        val data =
+            ClipData.newPlainText("QQGroupCount", context.getString(R.string.qq_group_account))
         context.getSystemService<ClipboardManager>()?.setPrimaryClip(data)
         showToast("复制群号成功", ToastDuration.Long) {
             setAction(R.string.ok) {
