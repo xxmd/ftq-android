@@ -14,3 +14,12 @@ fun View.requestTextInput() {
         }, 300)
     }
 }
+
+
+fun View.cancelTextInput() {
+    clearFocus()
+    post {
+        context.getSystemService<InputMethodManager>()
+            ?.hideSoftInputFromWindow(windowToken, 0)
+    }
+}

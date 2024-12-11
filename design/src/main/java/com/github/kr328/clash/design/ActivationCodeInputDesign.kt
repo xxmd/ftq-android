@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.core.widget.doOnTextChanged
 import com.github.kr328.clash.common.log.Log
+import com.github.kr328.clash.common.util.format
 import com.github.kr328.clash.design.ProxyDesign.Request
 import com.github.kr328.clash.design.adapter.SingleSelectAdapter
 import com.github.kr328.clash.design.adapter.SubscriptionAdapter
@@ -22,6 +23,8 @@ import com.github.kr328.clash.design.util.ValidatorUUIDString
 import com.github.kr328.clash.design.util.applyFrom
 import com.github.kr328.clash.design.util.applyLinearAdapter
 import com.github.kr328.clash.design.util.bindAppBarElevation
+import com.github.kr328.clash.design.util.cancelTextInput
+import com.github.kr328.clash.design.util.format
 import com.github.kr328.clash.design.util.layoutInflater
 import com.github.kr328.clash.design.util.patchDataSet
 import com.github.kr328.clash.design.util.requestTextInput
@@ -50,7 +53,7 @@ class ActivationCodeInputDesign(context: Context) :
     val service = ServiceStore(context)
 
     sealed class Request {
-        object OnConfirm : Request()
+        object OnActivationCodeUsed : Request()
     }
 
     val binding = DesignActivationCodeInputBinding
@@ -101,7 +104,7 @@ class ActivationCodeInputDesign(context: Context) :
                     "该激活码已被使用，激活记录如下\n" +
                             "激活日期：%s\n" +
                             "激活设备：%s",
-                    formatDate(activationRecord.createTime),
+                   activationRecord.createTime.format(),
                     activationRecord.device.model
                 )
             )
@@ -117,7 +120,7 @@ class ActivationCodeInputDesign(context: Context) :
                     "所属套餐：%s\n" +
                             "激活时长：%d天\n",
                     activationCode.subscription.name,
-                    activationCode.activationDays
+                    activationCode.subscription.activationDays
                 )
             )
             .setPositiveButton("确认激活") { _, _ -> showExpirationDateWillAddDialog(activationCode) }
@@ -126,9 +129,10 @@ class ActivationCodeInputDesign(context: Context) :
 
     fun showExpirationDateWillAddDialog(activationCode: ActivationCode) {
         // 发送网络请求将激活码状态转成已激活，并存储激活记录
+        val baseDate = maxDate(service.expirationDate, Date())
         val calendar = Calendar.getInstance()
-        calendar.time = service.expirationDate
-        calendar.add(Calendar.DAY_OF_YEAR, activationCode.activationDays)
+        calendar.time = baseDate
+        calendar.add(Calendar.DAY_OF_YEAR, activationCode.subscription.activationDays)
         MaterialAlertDialogBuilder(context)
             .setTitle("激活成功")
             .setMessage(
@@ -136,26 +140,29 @@ class ActivationCodeInputDesign(context: Context) :
                     "原始的有效期：%s\n" +
                             "新增激活时长：%d天\n" +
                             "新增后有效期：%s",
-                    formatDate(service.expirationDate),
-                    activationCode.activationDays,
-                    formatDate(calendar.time)
+                    service.expirationDate.format(),
+                    activationCode.subscription.activationDays,
+                    calendar.time.format()
                 )
             )
             .setPositiveButton(R.string.ok) { _, _ ->
-                addExpirationDate(activationCode.activationDays)
+                binding.textField.cancelTextInput()
+                setExpirationDate(calendar.time)
             }
             .show()
     }
 
-    fun addExpirationDate(addDays: Int) {
+    fun maxDate(date1: Date, date2: Date): Date {
+        return if (date1 >= date2) date1 else date2
+    }
+
+    fun setExpirationDate(date: Date) {
         // 发送网络请求将激活码状态转成已激活，并存储激活记录
-        val calendar = Calendar.getInstance()
-        calendar.time = service.expirationDate
-        calendar.add(Calendar.DAY_OF_YEAR, addDays)
-        service.expirationDate = calendar.time
+        service.expirationDate = date
         GlobalScope.launch(Dispatchers.Main) {
-            showToast("有效期延长至 " + formatDate(calendar.time), ToastDuration.Indefinite) {
+            showToast("有效期延长至 " + date.format(), ToastDuration.Indefinite) {
                 setAction(R.string.ok) {
+                    requests.trySend(Request.OnActivationCodeUsed)
                 }
             }
         }
@@ -179,20 +186,11 @@ class ActivationCodeInputDesign(context: Context) :
             showCodeConfirmDialog(activationCode)
         }
 
-        requests.trySend(Request.OnConfirm)
-    }
-
-    fun formatDate(date: Date): String {
-        Log.i("formatDate: " + date)
-        val formatter = SimpleDateFormat("yyyy-MM-dd HH:mm:ss")
-        return formatter.format(date)
     }
 
     fun queryActivationCode(codeContent: String): ActivationCode? {
         val activationCode = ActivationCode()
-//        activationCode.activationDays = 30
-//        activationCode.subscription = Subscription()
-//        activationCode.subscription.name = "包月套餐"
+        activationCode.subscription = Subscription("包天套餐", 1.00, 1)
         return activationCode
     }
 }

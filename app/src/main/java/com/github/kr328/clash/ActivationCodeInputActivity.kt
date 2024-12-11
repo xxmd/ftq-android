@@ -1,5 +1,6 @@
 package com.github.kr328.clash
 
+import com.github.kr328.clash.common.util.intent
 import com.github.kr328.clash.design.ActivationCodeInputDesign
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.selects.select
@@ -19,8 +20,17 @@ class ActivationCodeInputActivity : BaseActivity<ActivationCodeInputDesign>() {
 
                 }
                 design.requests.onReceive {
+                    when(it) {
+                        ActivationCodeInputDesign.Request.OnActivationCodeUsed -> {
+                            toMainActivity()
+                        }
+                    }
                 }
             }
         }
+    }
+
+    private fun toMainActivity() {
+        startActivity(MainActivity::class.intent)
     }
 }

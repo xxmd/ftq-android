@@ -63,6 +63,6 @@ class ServiceStore(context: Context) {
 
     var expirationDate by store.date(
         key = "expiration_date",
-        defaultValue = Date()
+        defaultValue = Date(0)
     )
 }

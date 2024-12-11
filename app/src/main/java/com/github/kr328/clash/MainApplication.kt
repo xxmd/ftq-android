@@ -2,10 +2,12 @@ package com.github.kr328.clash
 
 import android.app.Application
 import android.content.Context
+import android.content.Intent
 import com.github.kr328.clash.common.Global
 import com.github.kr328.clash.common.compat.currentProcessName
 import com.github.kr328.clash.common.log.Log
 import com.github.kr328.clash.remote.Remote
+import com.github.kr328.clash.service.ExpirationCheckService
 import com.github.kr328.clash.service.util.sendServiceRecreated
 import com.github.kr328.clash.util.clashDir
 import java.io.File
@@ -33,6 +35,15 @@ class MainApplication : Application() {
         } else {
             sendServiceRecreated()
         }
+        startExpirationCheckService()
+    }
+
+    /**
+     * 开启过期时间检测服务
+     */
+    private fun startExpirationCheckService() {
+        val intent = Intent(this, ExpirationCheckService::class.java)
+        startService(intent)
     }
 
     private fun extractGeoFiles() {

@@ -105,8 +105,9 @@ class MainDesign(context: Context) : Design<MainDesign.Request>(context) {
     fun updateExpiration() {
         val (remainTime, hasRemaining) = computeRemain()
         binding.tvExpiration.text = String.format("剩余时间: %s", remainTime)
-        binding.tvExpiration.subtext =
-            String.format("有效期至: %s", service.expirationDate.format())
+        binding.tvExpiration.subtext = String.format("有效期至: %s", service.expirationDate.format())
+        binding.cardAppForbidden.visibility = if (!hasRemaining) View.VISIBLE else View.GONE
+        binding.cardClashSwitch.visibility = if (hasRemaining) View.VISIBLE else View.GONE
         if (!hasRemaining) {
             GlobalScope.launch(Dispatchers.Main) {
                 showToast("您的使用有效期不足，请尽快充值", ToastDuration.Indefinite) {
