@@ -43,8 +43,8 @@ subprojects {
             minSdk = 21
             targetSdk = 33
 
-            versionName = "1.1"
-            versionCode = 11
+            versionName = "2.0"
+            versionCode = 2000
 
             resValue("string", "release_name", "v$versionName")
             resValue("integer", "release_code", "$versionCode")
@@ -67,9 +67,9 @@ subprojects {
 
         if (isApp) {
             packagingOptions {
-                resources {
-                    excludes.add("DebugProbesKt.bin")
-                }
+//                resources {
+//                    excludes.add("DebugProbesKt.bin")
+//                }
             }
         }
 

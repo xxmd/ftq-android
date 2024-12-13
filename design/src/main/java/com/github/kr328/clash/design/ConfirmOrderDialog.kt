@@ -42,21 +42,18 @@ class ConfirmOrderDialog(
     )
     private val _platformList: List<PaymentPlatform> = listOf(
         PaymentPlatform(
-            1,
             "淘宝",
             "https://wms-file-bucket.oss-cn-hangzhou.aliyuncs.com/taobao.png",
             "com.taobao.taobao",
             taobaoSkuList
         ),
         PaymentPlatform(
-            2,
             "天猫",
             "https://wms-file-bucket.oss-cn-hangzhou.aliyuncs.com/tianmao.png",
             "com.tmall.wireless",
             taobaoSkuList
         ),
         PaymentPlatform(
-            3,
             "拼多多",
             "https://wms-file-bucket.oss-cn-hangzhou.aliyuncs.com/pdd.png",
             "com.xunmeng.pinduoduo",

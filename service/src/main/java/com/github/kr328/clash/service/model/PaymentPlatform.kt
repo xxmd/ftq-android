@@ -7,10 +7,9 @@ import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 
 @Serializable
-data class PaymentPlatform(
-    val id: Int,
+class PaymentPlatform(
     val name: String,
     val iconUrl: String,
     val packageName: String,
     val skuList: List<Sku>,
-)
+) : BaseEntity()

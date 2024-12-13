@@ -18,6 +18,7 @@
         tools:ignore="QueryAllPackagesPermission" />
 
     <application
+        android:usesCleartextTraffic="true"
         android:name=".MainApplication"
         android:allowBackup="true"
         android:banner="@mipmap/ic_banner"

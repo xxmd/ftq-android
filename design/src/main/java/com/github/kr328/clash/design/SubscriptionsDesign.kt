@@ -1,39 +1,31 @@
 package com.github.kr328.clash.design
 
 import android.content.Context
-import android.content.Intent
 import android.text.TextUtils
 import android.view.View
-import android.view.ViewGroup
-import com.github.kr328.clash.common.log.Log
-import com.github.kr328.clash.design.ProxyDesign.Request
 import com.github.kr328.clash.design.adapter.SingleSelectAdapter
 import com.github.kr328.clash.design.adapter.SubscriptionAdapter
+import com.github.kr328.clash.design.api.ApiResponse
+import com.github.kr328.clash.design.api.BaseApiService
+import com.github.kr328.clash.design.api.SubscriptionService
 import com.github.kr328.clash.design.databinding.DesignSubscriptionsBinding
-import com.github.kr328.clash.design.databinding.DialogPlatformMenuBinding
-import com.github.kr328.clash.design.databinding.DialogProfilesMenuBinding
-import com.github.kr328.clash.design.dialog.AppBottomSheetDialog
 import com.github.kr328.clash.design.util.applyFrom
 import com.github.kr328.clash.design.util.applyLinearAdapter
 import com.github.kr328.clash.design.util.bindAppBarElevation
 import com.github.kr328.clash.design.util.layoutInflater
-import com.github.kr328.clash.design.util.patchDataSet
 import com.github.kr328.clash.design.util.root
-import com.github.kr328.clash.service.model.BaseEntity
 import com.github.kr328.clash.service.model.PaymentPlatform
-import com.github.kr328.clash.service.model.Profile
 import com.github.kr328.clash.service.model.PurchasePlan
-import com.github.kr328.clash.service.model.Sku
 import com.github.kr328.clash.service.model.Subscription
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
-import kotlinx.coroutines.withContext
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import javax.net.ssl.HttpsURLConnection
 
 class SubscriptionsDesign(context: Context) : Design<SubscriptionsDesign.Request>(context),
     SingleSelectAdapter.SingleSelectListener<Subscription> {
-
     sealed class Request {
         /**
          * 买哪个订阅套餐，去哪个平台购买，对应平台上哪个 sku
@@ -41,15 +33,17 @@ class SubscriptionsDesign(context: Context) : Design<SubscriptionsDesign.Request
         data class OnOrderConfirm(val purchasePlan: PurchasePlan) : Request()
     }
 
+
     private val binding = DesignSubscriptionsBinding
         .inflate(context.layoutInflater, context.root, false)
     private val adapter = SubscriptionAdapter(context)
 
-    private val subscriptionList: List<Subscription> = listOf(
-        Subscription("包天套餐", 1.00, 1),
-        Subscription("包月套餐", 10.00, 30),
-        Subscription("包年套餐", 50.00, 365),
-    )
+    private lateinit var loadingDialog: LoadingDialog
+//    private val subscriptionList: List<Subscription> = listOf(
+//        Subscription("包天套餐", 1.00, 1),
+//        Subscription("包月套餐", 10.00, 30),
+//        Subscription("包年套餐", 50.00, 365),
+//    )
 
     override val root: View
         get() = binding.root
@@ -65,10 +59,51 @@ class SubscriptionsDesign(context: Context) : Design<SubscriptionsDesign.Request
         }
 
         adapter.setSingleSelectListener(this)
-        adapter.itemList = subscriptionList
-        adapter.selectByIndex(0)
+
+        sendRequest()
     }
 
+    private fun sendRequest() {
+        // 显示 loading
+        loadingDialog = LoadingDialog(context)
+        loadingDialog.show()
+
+        // 启动协程
+        CoroutineScope(Dispatchers.Main).launch {
+            try {
+                // 使用 Retrofit 发起请求
+                val response = fetchData()
+                // 处理请求成功
+                handleResponse(response)
+            } catch (e: Exception) {
+                // 处理错误
+//                handleError(e)
+            } finally {
+                // 请求完成，隐藏 loading
+                loadingDialog.dismiss()
+            }
+        }
+    }
+
+    private fun handleResponse(response: ApiResponse<List<Subscription>>) {
+        if (response.code == HttpsURLConnection.HTTP_OK) {
+            adapter.itemList = response.data!!
+            adapter.selectByIndex(0)
+        } else {
+
+        }
+    }
+
+    // 创建 Retrofit 实例
+    private val retrofit = Retrofit.Builder()
+        .baseUrl("http://127.0.0.1:8080")
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+    // 获取数据的挂起函数
+    private suspend fun fetchData(): ApiResponse<List<Subscription>> {
+        val apiService = retrofit.create(SubscriptionService::class.java)
+        return apiService.findAll()
+    }
     private fun onPaymentPlatformConfirm(
         dialog: PaymentPlatformDialog,
         paymentPlatform: PaymentPlatform

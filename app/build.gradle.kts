@@ -28,6 +28,8 @@ dependencies {
     implementation ("com.github.bumptech.glide:glide:4.15.1")  // Glide 库
     annotationProcessor ("com.github.bumptech.glide:compiler:4.15.1")  // Glide 注解处理器
     implementation ("com.google.code.gson:gson:2.8.8")
+    implementation("com.squareup.retrofit2:retrofit:2.9.0")
+    implementation("com.squareup.retrofit2:converter-gson:2.9.0")
 }
 
 tasks.getByName("clean", type = Delete::class) {
