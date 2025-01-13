@@ -5,7 +5,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class BaseApiService {
     // 创建 Retrofit 实例并根据泛型返回不同的 Service
-    inline fun <reified T> create(): T {
+     inline fun <reified T> create(): T {
         val retrofit = Retrofit.Builder()
             .baseUrl("http://127.0.0.1:8080")  // 根据实际情况修改 baseUrl
             .addConverterFactory(GsonConverterFactory.create())

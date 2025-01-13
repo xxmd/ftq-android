@@ -1,6 +1,5 @@
 package com.github.kr328.clash.design.adapter
 
-import android.content.Context
 import androidx.recyclerview.widget.RecyclerView
 
 abstract class SingleSelectAdapter<T, VH : RecyclerView.ViewHolder>(

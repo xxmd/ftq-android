@@ -2,6 +2,7 @@ package com.github.kr328.clash.design
 
 import android.content.Context
 import android.view.View
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.github.kr328.clash.design.ui.Surface
 import com.github.kr328.clash.design.ui.ToastDuration
@@ -18,6 +19,7 @@ abstract class Design<R>(val context: Context) :
 
     val surface = Surface()
     val requests: Channel<R> = Channel(Channel.UNLIMITED)
+    val loadingDialog: LoadingDialog = LoadingDialog(context)
 
     suspend fun showToast(
         resId: Int,
@@ -55,5 +57,28 @@ abstract class Design<R>(val context: Context) :
                 }
             }
         }
+    }
+
+    fun setLoading(loading: Boolean) {
+        if (loading) {
+            loadingDialog.show()
+        } else {
+            loadingDialog.dismiss()
+        }
+    }
+
+    fun showErrorDialog(errorMessage: String) {
+        val builder = AlertDialog.Builder(context)
+        builder.apply {
+            setTitle("出现错误") // 设置标题
+            setMessage(errorMessage) // 设置错误消息
+            setPositiveButton("确认") { dialog, _ ->
+                dialog.dismiss()  // 按钮点击后关闭对话框
+            }
+        }
+
+        // 创建并显示对话框
+        val dialog = builder.create()
+        dialog.show()
     }
 }

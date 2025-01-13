@@ -118,25 +118,29 @@ class MainActivity : BaseActivity<MainDesign>() {
     }
 
     private suspend fun MainDesign.autoImportConfig() {
-        withProfile {
-            val providerList = queryAll()
-            if (providerList.size == 0) {
-                createDefaultProfile {
-                    withContext(Dispatchers.Main) {
-                        withProcessing { updateStatus ->
-                            coroutineScope {
-                                commit(it.uuid) {
-                                    launch {
-                                        Log.i(it.toString())
-                                        updateStatus(it)
+        try {
+            withProfile {
+                val providerList = queryAll()
+                if (providerList.size == 0) {
+                    createDefaultProfile {
+                        withContext(Dispatchers.Main) {
+                            withProcessing { updateStatus ->
+                                coroutineScope {
+                                    commit(it.uuid) {
+                                        launch {
+                                            Log.i(it.toString())
+                                            updateStatus(it)
+                                        }
                                     }
+                                    setActive(it)
                                 }
-                                setActive(it)
                             }
                         }
                     }
                 }
             }
+        } catch (e: Exception) {
+            TODO("Not yet implemented")
         }
     }
 

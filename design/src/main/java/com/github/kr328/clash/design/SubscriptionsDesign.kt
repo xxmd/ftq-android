@@ -3,6 +3,7 @@ package com.github.kr328.clash.design
 import android.content.Context
 import android.text.TextUtils
 import android.view.View
+import com.github.kr328.clash.common.log.Log
 import com.github.kr328.clash.design.adapter.SingleSelectAdapter
 import com.github.kr328.clash.design.adapter.SubscriptionAdapter
 import com.github.kr328.clash.design.api.ApiResponse
@@ -19,7 +20,9 @@ import com.github.kr328.clash.service.model.PurchasePlan
 import com.github.kr328.clash.service.model.Subscription
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import javax.net.ssl.HttpsURLConnection
@@ -33,18 +36,10 @@ class SubscriptionsDesign(context: Context) : Design<SubscriptionsDesign.Request
         data class OnOrderConfirm(val purchasePlan: PurchasePlan) : Request()
     }
 
-
     private val binding = DesignSubscriptionsBinding
         .inflate(context.layoutInflater, context.root, false)
     private val adapter = SubscriptionAdapter(context)
-
-    private lateinit var loadingDialog: LoadingDialog
-//    private val subscriptionList: List<Subscription> = listOf(
-//        Subscription("包天套餐", 1.00, 1),
-//        Subscription("包月套餐", 10.00, 30),
-//        Subscription("包年套餐", 50.00, 365),
-//    )
-
+//    private inline val subscriptionService: SubscriptionService = BaseApiService.cre
     override val root: View
         get() = binding.root
 
@@ -65,45 +60,48 @@ class SubscriptionsDesign(context: Context) : Design<SubscriptionsDesign.Request
 
     private fun sendRequest() {
         // 显示 loading
-        loadingDialog = LoadingDialog(context)
-        loadingDialog.show()
+        setLoading(true)
 
-        // 启动协程
-        CoroutineScope(Dispatchers.Main).launch {
+        GlobalScope.launch(Dispatchers.Main) {
             try {
-                // 使用 Retrofit 发起请求
-                val response = fetchData()
-                // 处理请求成功
-                handleResponse(response)
+                val subscriptionList = requestSubscriptionList()
+                if (subscriptionList == null) {
+                    showErrorDialog("请求套餐数据异常，请截图联系群主")
+                    return@launch
+                }
+                if (subscriptionList != null) {
+                    adapter.itemList = subscriptionList
+                    adapter.selectByIndex(0)
+                }
             } catch (e: Exception) {
-                // 处理错误
-//                handleError(e)
+                showErrorDialog("请求套餐数据异常，请截图联系群主")
             } finally {
-                // 请求完成，隐藏 loading
-                loadingDialog.dismiss()
+                setLoading(false)
             }
         }
     }
 
-    private fun handleResponse(response: ApiResponse<List<Subscription>>) {
-        if (response.code == HttpsURLConnection.HTTP_OK) {
-            adapter.itemList = response.data!!
-            adapter.selectByIndex(0)
-        } else {
-
+    /**
+     * 请求套餐数据
+     */
+    private suspend fun requestSubscriptionList(): List<Subscription>? {
+        return withContext(Dispatchers.IO) {
+            try {
+                val retrofit = Retrofit.Builder()
+                    .baseUrl("http://192.168.100.214:8080/")
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build()
+                val apiService = retrofit.create(SubscriptionService::class.java)
+                val response = apiService.findAll()
+                if (response.isSuccess()) {
+                    return@withContext response.data
+                }
+            } catch (e: Exception) {
+            }
+            return@withContext null
         }
     }
 
-    // 创建 Retrofit 实例
-    private val retrofit = Retrofit.Builder()
-        .baseUrl("http://127.0.0.1:8080")
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-    // 获取数据的挂起函数
-    private suspend fun fetchData(): ApiResponse<List<Subscription>> {
-        val apiService = retrofit.create(SubscriptionService::class.java)
-        return apiService.findAll()
-    }
     private fun onPaymentPlatformConfirm(
         dialog: PaymentPlatformDialog,
         paymentPlatform: PaymentPlatform
@@ -113,7 +111,15 @@ class SubscriptionsDesign(context: Context) : Design<SubscriptionsDesign.Request
         if (selectedSubscription != null) {
             val sku = paymentPlatform.skuList[0]
             if (sku != null && !TextUtils.isEmpty(sku.link)) {
-                requests.trySend(Request.OnOrderConfirm(PurchasePlan(selectedSubscription, paymentPlatform, sku)))
+                requests.trySend(
+                    Request.OnOrderConfirm(
+                        PurchasePlan(
+                            selectedSubscription,
+                            paymentPlatform,
+                            sku
+                        )
+                    )
+                )
             }
         }
     }
