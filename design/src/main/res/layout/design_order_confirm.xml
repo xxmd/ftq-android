@@ -10,7 +10,7 @@
             type="com.github.kr328.clash.service.model.Subscription" />
         <variable
             name="paymentPlatform"
-            type="com.github.kr328.clash.service.model.PaymentPlatform" />
+            type="com.github.kr328.clash.service.model.Platform" />
         <variable
             name="sku"
             type="com.github.kr328.clash.service.model.Sku" />

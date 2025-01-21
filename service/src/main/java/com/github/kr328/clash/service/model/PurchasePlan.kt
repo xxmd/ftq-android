@@ -1,10 +1,11 @@
 package com.github.kr328.clash.service.model
 
-import kotlinx.serialization.Serializable
-import kotlin.properties.Delegates
-
+/**
+ * 购买计划
+ */
 data class PurchasePlan(
+    // 买那个套餐
     val subscription: Subscription,
-    val paymentPlatform: PaymentPlatform,
+    //
     val sku: Sku
 )

@@ -7,7 +7,7 @@ import kotlin.random.Random
 
 @Serializable
 open class BaseEntity {
-    var id: Int = Random.nextInt(1, Int.MAX_VALUE)
+    var id: Long = 0
 
     @Contextual
     var createTime: Date = Date()

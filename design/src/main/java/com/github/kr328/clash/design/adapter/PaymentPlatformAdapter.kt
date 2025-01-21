@@ -7,22 +7,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
-import com.github.kr328.clash.common.log.Log
 import com.github.kr328.clash.design.R
-import com.github.kr328.clash.design.databinding.AdapterProfileBinding
-import com.github.kr328.clash.design.databinding.AdapterSubscriptionBinding
-import com.github.kr328.clash.design.model.ProfilePageState
-import com.github.kr328.clash.design.model.ProxyPageState
-import com.github.kr328.clash.design.ui.ObservableCurrentTime
-import com.github.kr328.clash.design.util.layoutInflater
-import com.github.kr328.clash.design.view.ActionLabel
 import com.github.kr328.clash.design.view.LargeActionLabel
-import com.github.kr328.clash.service.model.PaymentPlatform
-import com.github.kr328.clash.service.model.Profile
-import com.github.kr328.clash.service.model.Subscription
-import kotlinx.coroutines.CoroutineScope
+import com.github.kr328.clash.service.model.Platform
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.io.InputStream
 import java.net.HttpURLConnection
@@ -30,11 +18,11 @@ import java.net.URL
 
 class PaymentPlatformAdapter(
     private val context: Context,
-    private val onItemClick: (PaymentPlatform) -> Unit
+    private val onItemClick: (Platform) -> Unit
 ) : RecyclerView.Adapter<PaymentPlatformAdapter.Holder>() {
     class Holder(val actionLabel: LargeActionLabel) : RecyclerView.ViewHolder(actionLabel)
 
-    var platformList: List<PaymentPlatform> = emptyList()
+    var platformList: List<Platform> = emptyList()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): Holder {
         return Holder(

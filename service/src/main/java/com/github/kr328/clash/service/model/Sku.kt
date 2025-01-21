@@ -12,4 +12,5 @@ data class Sku(
     val platformId: Int,
     val subscriptionId: Int,
     val link: String,
+    val platform: Platform
 )

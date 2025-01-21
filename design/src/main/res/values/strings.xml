@@ -322,4 +322,5 @@
     <string name="parse_pure_ip">Parse Pure IP</string>
     <string name="override_destination">Override Destination</string>
     <string name="activation_code_validate_error">激活码验证失败</string>
+    <string name="defult_error_tips">请求套餐数据异常，请截图联系群主</string>
 </resources>

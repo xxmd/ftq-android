@@ -1,9 +1,7 @@
 package com.github.kr328.clash
 
 import android.content.Intent
-import com.github.kr328.clash.common.log.Log
 import com.github.kr328.clash.design.SubscriptionsDesign
-import com.github.kr328.clash.service.model.PaymentPlatform
 import com.github.kr328.clash.service.model.PurchasePlan
 import com.github.kr328.clash.service.model.Sku
 import com.github.kr328.clash.service.model.Subscription
@@ -12,7 +10,7 @@ import kotlinx.coroutines.isActive
 import kotlinx.coroutines.selects.select
 
 /**
- * 订阅套餐选择界面
+ * 套餐选择界面
  */
 class SubscriptionsActivity : BaseActivity<SubscriptionsDesign>() {
 
@@ -25,8 +23,8 @@ class SubscriptionsActivity : BaseActivity<SubscriptionsDesign>() {
             select<Unit> {
                 design.requests.onReceive {
                     when (it) {
-                        is SubscriptionsDesign.Request.OnOrderConfirm -> {
-                            toOrderConfirmPage(it.purchasePlan)
+                        is SubscriptionsDesign.Request.OnConfirm -> {
+                            toOrderConfirmPage(it.subscription, it.sku)
                         }
                     }
                 }
@@ -38,11 +36,13 @@ class SubscriptionsActivity : BaseActivity<SubscriptionsDesign>() {
      * 前往订单确认界面
      */
     private fun toOrderConfirmPage(
-        purchasePlan: PurchasePlan
+        subscription: Subscription,
+        sku: Sku
     ) {
         val intent = Intent(this, OrderConfirmActivity::class.java)
         val gson = Gson()
-        intent.putExtra(OrderConfirmActivity.EXTRA_PURCHASE_PLAN, gson.toJson(purchasePlan))
+        intent.putExtra(OrderConfirmActivity.EXTRA_SUBSCRIPTION, gson.toJson(subscription))
+        intent.putExtra(OrderConfirmActivity.EXTRA_SUBSCRIPTION, gson.toJson(sku))
         startActivity(intent)
     }
 }

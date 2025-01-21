@@ -4,6 +4,8 @@ import android.content.Intent
 import android.net.Uri
 import com.github.kr328.clash.design.OrderConfirmDesign
 import com.github.kr328.clash.service.model.PurchasePlan
+import com.github.kr328.clash.service.model.Sku
+import com.github.kr328.clash.service.model.Subscription
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.gson.Gson
 import kotlinx.coroutines.isActive
@@ -14,20 +16,23 @@ import kotlinx.coroutines.selects.select
  */
 class OrderConfirmActivity : BaseActivity<OrderConfirmDesign>() {
     companion object {
-        val EXTRA_PURCHASE_PLAN = "EXTRA_PURCHASE_PLAN"
+        val EXTRA_SUBSCRIPTION = "EXTRA_SUBSCRIPTION"
+        val EXTRA_SKU = "EXTRA_SKU"
     }
 
-    private lateinit var purchasePlan: PurchasePlan
+    private lateinit var subscription: Subscription
+    private lateinit var sku: Sku
 
     override suspend fun main() {
         val design = OrderConfirmDesign(this)
         setContentDesign(design)
 
         val gson = Gson()
-        purchasePlan = gson.fromJson(intent.getStringExtra(EXTRA_PURCHASE_PLAN), PurchasePlan::class.java)
-        design.binding.subscription = purchasePlan.subscription
-        design.binding.paymentPlatform = purchasePlan.paymentPlatform
-        design.binding.sku = purchasePlan.sku
+        subscription =
+            gson.fromJson(intent.getStringExtra(EXTRA_SUBSCRIPTION), Subscription::class.java)
+        sku = gson.fromJson(intent.getStringExtra(EXTRA_SKU), Sku::class.java)
+        design.binding.subscription = subscription
+        design.binding.sku = sku
         design.binding.platformAppOpened = false
 
         while (isActive) {
@@ -53,18 +58,19 @@ class OrderConfirmActivity : BaseActivity<OrderConfirmDesign>() {
     private fun openPaymentPlatformApp() {
         try {
             val intent = Intent(Intent.ACTION_VIEW)
-            intent.setData(Uri.parse(purchasePlan.sku.link))
-            intent.setPackage(purchasePlan.paymentPlatform.packageName)
+            intent.setData(Uri.parse(sku.link))
+            intent.setPackage(sku.platform.packageName)
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(intent)
             this.design?.binding?.platformAppOpened = true
         } catch (e: Exception) {
+            val platformName = sku.platform.name
             MaterialAlertDialogBuilder(this)
-                .setTitle(String.format("您的设备未安装%sAPP", purchasePlan.paymentPlatform.name))
+                .setTitle(String.format("您的设备未安装%sAPP", platformName))
                 .setMessage(
                     String.format(
                         "1. 请安装%sAPP后再付款\n2. 或者选择其他付款平台",
-                        purchasePlan.paymentPlatform.name
+                        platformName
                     )
                 )
                 .setPositiveButton("确认") { _, _ -> finish() }
