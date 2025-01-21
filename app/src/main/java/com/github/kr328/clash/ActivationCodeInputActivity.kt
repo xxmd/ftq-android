@@ -21,7 +21,7 @@ class ActivationCodeInputActivity : BaseActivity<ActivationCodeInputDesign>() {
                 }
                 design.requests.onReceive {
                     when(it) {
-                        ActivationCodeInputDesign.Request.OnActivationCodeUsed -> {
+                        ActivationCodeInputDesign.Request.OnActivationCodeApply -> {
                             toMainActivity()
                         }
                     }

@@ -21,4 +21,7 @@ object ApiClient {
     val skuService: SkuService by lazy {
         RetrofitClient.retrofit.create(SkuService::class.java)
     }
+    val codeService: ActivationCodeService by lazy {
+        RetrofitClient.retrofit.create(ActivationCodeService::class.java)
+    }
 }

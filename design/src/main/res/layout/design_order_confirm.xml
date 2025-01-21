@@ -9,11 +9,8 @@
             name="subscription"
             type="com.github.kr328.clash.service.model.Subscription" />
         <variable
-            name="paymentPlatform"
+            name="platform"
             type="com.github.kr328.clash.service.model.Platform" />
-        <variable
-            name="sku"
-            type="com.github.kr328.clash.service.model.Sku" />
         <variable
             name="platformAppOpened"
             type="Boolean" />
@@ -54,9 +51,9 @@
                 <com.github.kr328.clash.design.view.CellView
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    app:iconUrl="@{paymentPlatform.iconUrl}"
+                    app:iconUrl="@{platform.iconUrl}"
                     app:label="付款平台"
-                    app:value="@{paymentPlatform.name}" />
+                    app:value="@{platform.name}" />
             </com.github.kr328.clash.design.view.CellGroup>
 
             <FrameLayout

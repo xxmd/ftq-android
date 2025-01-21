@@ -1,17 +1,26 @@
 package com.github.kr328.clash.service.model
 
-import kotlinx.serialization.Contextual
-import kotlinx.serialization.Serializable
-import java.util.Date
+import java.util.*
 
-@Serializable
 class ActivationCode : BaseEntity() {
+    // 激活码状态
+    var status: ActivationCodeStatus = ActivationCodeStatus.CREATED
+
+    // 激活码内容
     var content: String = ""
+
+    // 所属订阅套餐
     var subscriptionId: Int = 0
+
+    // 订阅套餐
     lateinit var subscription: Subscription
-    @Contextual
+
+    // 导出时间
     lateinit var exportTime: Date
-    @Contextual
+
+    // 激活时间
     lateinit var activateTime: Date
-    var activationRecord: ActivationRecord? = null
+
+    // 激活设备
+    var device: Device? = null
 }

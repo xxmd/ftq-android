@@ -42,7 +42,7 @@ class SubscriptionsActivity : BaseActivity<SubscriptionsDesign>() {
         val intent = Intent(this, OrderConfirmActivity::class.java)
         val gson = Gson()
         intent.putExtra(OrderConfirmActivity.EXTRA_SUBSCRIPTION, gson.toJson(subscription))
-        intent.putExtra(OrderConfirmActivity.EXTRA_SUBSCRIPTION, gson.toJson(sku))
+        intent.putExtra(OrderConfirmActivity.EXTRA_SKU, gson.toJson(sku))
         startActivity(intent)
     }
 }

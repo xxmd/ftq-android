@@ -1,9 +1,11 @@
 package com.github.kr328.clash.design
 
 import android.content.Context
+import android.util.Log
 import android.view.View
 import androidx.core.widget.doOnTextChanged
 import com.github.kr328.clash.common.util.format
+import com.github.kr328.clash.design.api.ApiClient
 import com.github.kr328.clash.design.databinding.DesignActivationCodeInputBinding
 import com.github.kr328.clash.design.ui.ToastDuration
 import com.github.kr328.clash.design.util.ValidatorUUIDString
@@ -13,13 +15,14 @@ import com.github.kr328.clash.design.util.layoutInflater
 import com.github.kr328.clash.design.util.requestTextInput
 import com.github.kr328.clash.design.util.root
 import com.github.kr328.clash.service.model.ActivationCode
-import com.github.kr328.clash.service.model.ActivationRecord
+import com.github.kr328.clash.service.model.Device
 import com.github.kr328.clash.service.model.Subscription
 import com.github.kr328.clash.service.store.ServiceStore
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.*
 
 class ActivationCodeInputDesign(context: Context) :
@@ -27,7 +30,7 @@ class ActivationCodeInputDesign(context: Context) :
     val service = ServiceStore(context)
 
     sealed class Request {
-        object OnActivationCodeUsed : Request()
+        object OnActivationCodeApply : Request()
     }
 
     val binding = DesignActivationCodeInputBinding
@@ -63,14 +66,14 @@ class ActivationCodeInputDesign(context: Context) :
             .setTitle(R.string.activation_code_validate_error)
             .setMessage(
                 "该激活码不存在\n" +
-                        "1. 请自行检查" +
+                        "1. 请自行检查\n" +
                         "2. 确认无误联系商家或佛跳墙群主"
             )
             .setPositiveButton(R.string.ok) { _, _ -> }
             .show()
     }
 
-    fun showCodeBeUsedDialog(activationRecord: ActivationRecord) {
+    fun showCodeBeUsedDialog(device: Device) {
         MaterialAlertDialogBuilder(context)
             .setTitle(R.string.activation_code_validate_error)
             .setMessage(
@@ -78,8 +81,8 @@ class ActivationCodeInputDesign(context: Context) :
                     "该激活码已被使用，激活记录如下\n" +
                             "激活日期：%s\n" +
                             "激活设备：%s",
-                   activationRecord.createTime.format(),
-                    activationRecord.device.model
+                    device.createTime.format(),
+                    device.model
                 )
             )
             .setPositiveButton(R.string.ok) { _, _ -> }
@@ -136,35 +139,50 @@ class ActivationCodeInputDesign(context: Context) :
         GlobalScope.launch(Dispatchers.Main) {
             showToast("有效期延长至 " + date.format(), ToastDuration.Indefinite) {
                 setAction(R.string.ok) {
-                    requests.trySend(Request.OnActivationCodeUsed)
+                    requests.trySend(Request.OnActivationCodeApply)
                 }
             }
         }
     }
 
     fun onConfirm() {
-        val content = binding.textField.text!!.trim().toString()
-        val activationCode = queryActivationCode(content)
-        /**
-         * 发起请求查询该激活码状态
-         * 1. 该激活码不存在
-         * 2. 激活码存在
-         *  2.1 存在激活记录，即已经被其他设备使用
-         *  2.2 没有激活记录，是一个全新的激活码
-         */
-        if (activationCode == null) {
-            showCodeNotExistDialog()
-        } else if (activationCode.activationRecord != null) {
-            showCodeBeUsedDialog(activationCode.activationRecord!!)
-        } else {
-            showCodeConfirmDialog(activationCode)
+        GlobalScope.launch(Dispatchers.Main) {
+            try {
+                val content = binding.textField.text!!.trim().toString()
+                showLoadingDialog("获取激活码信息")
+                val activationCode = queryActivationCode(content)
+                /**
+                 * 发起请求查询该激活码状态
+                 * 1. 该激活码不存在
+                 * 2. 激活码存在
+                 *  2.1 存在激活记录，即已经被其他设备使用
+                 *  2.2 没有激活记录，是一个全新的激活码
+                 */
+                if (activationCode == null) {
+                    showCodeNotExistDialog()
+                } else if (activationCode.device != null) {
+                    showCodeBeUsedDialog(activationCode.device!!)
+                } else {
+                    showCodeConfirmDialog(activationCode)
+                }
+            } finally {
+                closeLoadingDialog()
+            }
         }
 
     }
 
-    fun queryActivationCode(codeContent: String): ActivationCode? {
-        val activationCode = ActivationCode()
-        activationCode.subscription = Subscription("包天套餐", 1.00, 1)
-        return activationCode
+    suspend fun queryActivationCode(codeContent: String): ActivationCode? {
+        return withContext(Dispatchers.IO) {
+            try {
+                val response =  ApiClient.codeService.findByContent(codeContent)
+                if (response.isSuccess()) {
+                    return@withContext response.data
+                }
+            } catch (e: Exception) {
+                com.github.kr328.clash.common.log.Log.e("queryActivationCode: " + e.message)
+            }
+            return@withContext null
+        }
     }
 }

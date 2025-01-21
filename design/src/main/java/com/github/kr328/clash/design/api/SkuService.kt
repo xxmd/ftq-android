@@ -8,6 +8,6 @@ import retrofit2.http.Query
  * sku 相关接口
  */
 interface SkuService {
-    @GET("/Sku/findAllBySubscriptionId")
+    @GET("/sku/findAllBySubscriptionId")
     suspend fun findAllBySubscriptionId(@Query("subscriptionId") subscriptionId: Long): ApiResponse<List<Sku>>
 }

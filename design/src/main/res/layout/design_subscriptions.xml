@@ -27,7 +27,7 @@
                 app:insets="@{self.surface.insets}" />
 
             <com.github.kr328.clash.design.view.ActionButton
-                android:onClick="@{() -> self.showPaymentPlatformDialog()}"
+                android:onClick="@{() -> self.onConfirmBtnClick()}"
                 android:id="@+id/btn_confirm"
                 android:layout_marginHorizontal="15dp"
                 android:layout_alignParentBottom="true"

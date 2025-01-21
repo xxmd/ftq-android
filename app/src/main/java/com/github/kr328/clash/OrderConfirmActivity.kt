@@ -32,7 +32,7 @@ class OrderConfirmActivity : BaseActivity<OrderConfirmDesign>() {
             gson.fromJson(intent.getStringExtra(EXTRA_SUBSCRIPTION), Subscription::class.java)
         sku = gson.fromJson(intent.getStringExtra(EXTRA_SKU), Sku::class.java)
         design.binding.subscription = subscription
-        design.binding.sku = sku
+        design.binding.platform = sku.platform
         design.binding.platformAppOpened = false
 
         while (isActive) {
@@ -47,7 +47,7 @@ class OrderConfirmActivity : BaseActivity<OrderConfirmDesign>() {
                         }
 
                         is OrderConfirmDesign.Request.ToActivationCodeInputPage -> {
-                            toActivationCodeInputPage()
+                            skipToCodeInputPage()
                         }
                     }
                 }
@@ -78,7 +78,7 @@ class OrderConfirmActivity : BaseActivity<OrderConfirmDesign>() {
         }
     }
 
-    fun toActivationCodeInputPage() {
+    fun skipToCodeInputPage() {
         val intent = Intent(this, ActivationCodeInputActivity::class.java)
         startActivity(intent)
     }

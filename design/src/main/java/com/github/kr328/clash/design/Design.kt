@@ -1,5 +1,6 @@
 package com.github.kr328.clash.design
 
+import android.app.ProgressDialog
 import android.content.Context
 import android.view.View
 import androidx.appcompat.app.AlertDialog
@@ -19,7 +20,7 @@ abstract class Design<R>(val context: Context) :
 
     val surface = Surface()
     val requests: Channel<R> = Channel(Channel.UNLIMITED)
-    val loadingDialog: LoadingDialog = LoadingDialog(context)
+    var loadingDialog: ProgressDialog = ProgressDialog(context)
 
     suspend fun showToast(
         resId: Int,
@@ -59,12 +60,23 @@ abstract class Design<R>(val context: Context) :
         }
     }
 
-    fun setLoading(loading: Boolean) {
-        if (loading) {
-            loadingDialog.show()
-        } else {
-            loadingDialog.dismiss()
+    fun showLoadingDialog(message: String) {
+        if (loadingDialog == null) {
+            loadingDialog = ProgressDialog(context)
         }
+        loadingDialog.setMessage(message)
+        loadingDialog.show()
+    }
+
+    fun showLoadingDialog() {
+        showLoadingDialog("加载中...")
+    }
+
+    fun closeLoadingDialog() {
+        if (loadingDialog == null) {
+            return
+        }
+        loadingDialog.dismiss()
     }
 
     fun showErrorDialog(errorMessage: String) {
