@@ -15,7 +15,6 @@ fun View.requestTextInput() {
     }
 }
 
-
 fun View.cancelTextInput() {
     clearFocus()
     post {

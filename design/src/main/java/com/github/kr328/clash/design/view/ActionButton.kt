@@ -19,7 +19,7 @@ class ActionButton @JvmOverloads constructor(
 
     init {
         // 设置上下 padding
-        setPadding(0, 20.dpToPx(), 0, 20.dpToPx())
+        setPadding(0, 18.dpToPx(), 0, 18.dpToPx())
         background = createStateBackground()
         setTextColor(Color.WHITE)
         setTextSize(16f)
@@ -35,13 +35,13 @@ class ActionButton @JvmOverloads constructor(
     private fun createStateBackground(): StateListDrawable {
         val enabledDrawable = GradientDrawable().apply {
             shape = GradientDrawable.RECTANGLE
-            cornerRadius = 8.dpToPx().toFloat() // 圆角半径
+            cornerRadius = 5.dpToPx().toFloat() // 圆角半径
             setColor(ContextCompat.getColor(context, R.color.color_clash_light)) // 启用时背景颜色
         }
 
         val disabledDrawable = GradientDrawable().apply {
             shape = GradientDrawable.RECTANGLE
-            cornerRadius = 8.dpToPx().toFloat()
+            cornerRadius = 5.dpToPx().toFloat()
             setColor(ContextCompat.getColor(context, R.color.color_light_control_disabled)) // 禁用时背景颜色
         }
 

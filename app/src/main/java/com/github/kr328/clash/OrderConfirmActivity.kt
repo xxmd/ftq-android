@@ -3,7 +3,7 @@ package com.github.kr328.clash
 import android.content.Intent
 import android.net.Uri
 import com.github.kr328.clash.design.OrderConfirmDesign
-import com.github.kr328.clash.service.model.PurchasePlan
+import com.github.kr328.clash.design.dialog.DialogManager
 import com.github.kr328.clash.service.model.Sku
 import com.github.kr328.clash.service.model.Subscription
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
@@ -20,26 +20,19 @@ class OrderConfirmActivity : BaseActivity<OrderConfirmDesign>() {
         val EXTRA_SKU = "EXTRA_SKU"
     }
 
+    // 索要购买的套餐
     private lateinit var subscription: Subscription
+
+    // 对应的 sku
     private lateinit var sku: Sku
 
     override suspend fun main() {
         val design = OrderConfirmDesign(this)
         setContentDesign(design)
-
-        val gson = Gson()
-        subscription =
-            gson.fromJson(intent.getStringExtra(EXTRA_SUBSCRIPTION), Subscription::class.java)
-        sku = gson.fromJson(intent.getStringExtra(EXTRA_SKU), Sku::class.java)
-        design.binding.subscription = subscription
-        design.binding.platform = sku.platform
-        design.binding.platformAppOpened = false
+        initData()
 
         while (isActive) {
             select<Unit> {
-                events.onReceive {
-
-                }
                 design.requests.onReceive {
                     when (it) {
                         is OrderConfirmDesign.Request.OnConfirm -> {
@@ -55,6 +48,16 @@ class OrderConfirmActivity : BaseActivity<OrderConfirmDesign>() {
         }
     }
 
+
+    private fun initData() {
+        val gson = Gson()
+        subscription =
+            gson.fromJson(intent.getStringExtra(EXTRA_SUBSCRIPTION), Subscription::class.java)
+        sku = gson.fromJson(intent.getStringExtra(EXTRA_SKU), Sku::class.java)
+        design?.binding?.subscription = subscription
+        design?.binding?.platform = sku.platform
+    }
+
     private fun openPaymentPlatformApp() {
         try {
             val intent = Intent(Intent.ACTION_VIEW)
@@ -62,8 +65,9 @@ class OrderConfirmActivity : BaseActivity<OrderConfirmDesign>() {
             intent.setPackage(sku.platform.packageName)
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(intent)
-            this.design?.binding?.platformAppOpened = true
+            DialogManager.showLoadingDialog("前往付款平台中...")
         } catch (e: Exception) {
+            DialogManager.hideLoadingDialog()
             val platformName = sku.platform.name
             MaterialAlertDialogBuilder(this)
                 .setTitle(String.format("您的设备未安装%sAPP", platformName))
@@ -78,7 +82,14 @@ class OrderConfirmActivity : BaseActivity<OrderConfirmDesign>() {
         }
     }
 
-    fun skipToCodeInputPage() {
+    override fun onStop() {
+        super.onStop()
+        design!!.binding.btnConfirm.alpha = 0.5f
+        design!!.binding.platformAppOpened = true
+        DialogManager.hideLoadingDialog()
+    }
+
+    private fun skipToCodeInputPage() {
         val intent = Intent(this, ActivationCodeInputActivity::class.java)
         startActivity(intent)
     }

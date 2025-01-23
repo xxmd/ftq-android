@@ -88,6 +88,10 @@ class MainActivity : BaseActivity<MainDesign>() {
                             startActivity(SubscriptionsActivity::class.intent)
                         }
 
+                        MainDesign.Request.ACTIVATE -> {
+                            startActivity(ActivationCodeInputActivity::class.intent)
+                        }
+
                     }
                 }
                 if (clashRunning) {

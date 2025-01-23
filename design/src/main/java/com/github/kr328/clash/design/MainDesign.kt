@@ -6,6 +6,7 @@ import android.content.Context
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.getSystemService
+import com.github.kr328.clash.common.log.Log
 import com.github.kr328.clash.common.util.format
 import com.github.kr328.clash.core.model.FetchStatus
 import com.github.kr328.clash.core.model.TunnelState
@@ -37,6 +38,7 @@ class MainDesign(context: Context) : Design<MainDesign.Request>(context) {
         OpenAbout,
         CopyQQGroupCount,
         PURCHASE,
+        ACTIVATE,
     }
 
     val service = ServiceStore(context)

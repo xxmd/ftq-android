@@ -5,7 +5,7 @@ import androidx.recyclerview.widget.RecyclerView
 abstract class SingleSelectAdapter<T, VH : RecyclerView.ViewHolder>(
     private val itemClazz: Class<T>
 ) : RecyclerView.Adapter<VH>() {
-    var itemList: List<T> = emptyList()
+     var itemList: List<T> = emptyList()
         set(value) {
             field = value
             notifyDataSetChanged()
@@ -69,7 +69,7 @@ abstract class SingleSelectAdapter<T, VH : RecyclerView.ViewHolder>(
     abstract fun bindViewHolderOnSelected(holder: VH, position: Int, item: T)
     abstract fun bindViewHolderOnUnSelected(holder: VH, position: Int, item: T)
 
-    override fun getItemCount(): Int {
+     override fun getItemCount(): Int {
         return itemList.size
     }
 }

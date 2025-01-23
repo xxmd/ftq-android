@@ -110,7 +110,6 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginVertical="@dimen/main_card_margin_vertical"
-                    android:onClick="@{() -> self.request(Request.PURCHASE)}"
                     app:icon="@drawable/timer"
                     app:subtext="有效期至: 2024/10/21 18:17:20"
                     app:text="剩余天数: 0 天" />
@@ -125,12 +124,29 @@
                     app:subtext="@string/qq_group_account"
                     app:text="佛跳墙 QQ 售后群" />
 
-                <com.github.kr328.clash.design.view.ActionButton
-                    android:layout_marginTop="10dp"
-                    android:onClick="@{() -> self.request(Request.PURCHASE)}"
-                    android:text="立即购买"
+
+                <LinearLayout
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"/>
+                    android:orientation="horizontal"
+                    android:layout_height="wrap_content">
+
+                    <com.github.kr328.clash.design.view.ActionButton
+                        android:layout_marginTop="10dp"
+                        android:onClick="@{() -> self.request(Request.ACTIVATE)}"
+                        android:text="兑换激活码"
+                        android:layout_width="0dp"
+                        android:layout_weight="2"
+                        android:layout_height="wrap_content"/>
+
+                    <com.github.kr328.clash.design.view.ActionButton
+                        android:layout_marginLeft="10dp"
+                        android:layout_marginTop="10dp"
+                        android:onClick="@{() -> self.request(Request.PURCHASE)}"
+                        android:text="立即购买"
+                        android:layout_width="0dp"
+                        android:layout_weight="3"
+                        android:layout_height="wrap_content"/>
+                </LinearLayout>
                 <!--                <com.github.kr328.clash.design.view.LargeActionCard-->
                 <!--                    android:layout_width="match_parent"-->
                 <!--                    android:layout_height="wrap_content"-->

@@ -6,7 +6,6 @@ import com.github.kr328.clash.service.util.UUIDSerializer
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.UseSerializers
 
-@Serializable
 class Platform(
     val name: String,
     val iconUrl: String,

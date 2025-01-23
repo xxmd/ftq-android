@@ -14,7 +14,6 @@
         <variable
             name="platformAppOpened"
             type="Boolean" />
-
         <import type="android.view.View" />
     </data>
 
@@ -56,31 +55,28 @@
                     app:value="@{platform.name}" />
             </com.github.kr328.clash.design.view.CellGroup>
 
-            <FrameLayout
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_alignParentBottom="true">
+                android:layout_alignParentBottom="true"
+                android:orientation="vertical">
 
-                <Button
-                    android:paddingVertical="20dp"
-                    android:visibility="@{!platformAppOpened ? View.VISIBLE : View.GONE}"
+                <com.github.kr328.clash.design.view.ActionButton
                     android:id="@+id/btn_confirm"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:onClick="@{() -> self.onConfirm()}"
-                    android:text="确认"
-                    android:textSize="18sp" />
+                    android:text="我已确认，前往付款" />
 
                 <com.github.kr328.clash.design.view.ActionButton
-                    android:paddingVertical="20dp"
-                    android:visibility="@{platformAppOpened ? View.VISIBLE : View.GONE}"
+                    android:layout_marginTop="10dp"
                     android:id="@+id/btn_input_code"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_alignParentBottom="true"
                     android:onClick="@{() -> self.toActivationCodeInputPage()}"
-                    android:text="我已付款，前往输入激活码" />
-            </FrameLayout>
+                    android:text="我已付款，前往输入激活码"
+                    android:visibility="@{platformAppOpened ? View.VISIBLE : View.GONE}" />
+            </LinearLayout>
         </RelativeLayout>
 
         <com.github.kr328.clash.design.view.ActivityBarLayout

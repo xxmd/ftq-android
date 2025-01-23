@@ -18,7 +18,6 @@ import java.io.FileOutputStream
 class MainApplication : Application() {
     override fun attachBaseContext(base: Context?) {
         super.attachBaseContext(base)
-
         Global.init(this)
     }
 
@@ -35,7 +34,9 @@ class MainApplication : Application() {
         } else {
             sendServiceRecreated()
         }
-        startExpirationCheckService()
+//        startExpirationCheckService()
+        // 初始化网络请求工具
+//        ApiClient.initialize(this)
     }
 
     /**

@@ -2,7 +2,6 @@ package com.github.kr328.clash
 
 import android.content.Intent
 import com.github.kr328.clash.design.SubscriptionsDesign
-import com.github.kr328.clash.service.model.PurchasePlan
 import com.github.kr328.clash.service.model.Sku
 import com.github.kr328.clash.service.model.Subscription
 import com.google.gson.Gson
