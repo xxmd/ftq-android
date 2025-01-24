@@ -7,7 +7,6 @@ import com.github.kr328.clash.common.Global
 import com.github.kr328.clash.common.compat.currentProcessName
 import com.github.kr328.clash.common.log.Log
 import com.github.kr328.clash.remote.Remote
-import com.github.kr328.clash.service.ExpirationCheckService
 import com.github.kr328.clash.service.util.sendServiceRecreated
 import com.github.kr328.clash.util.clashDir
 import java.io.File
@@ -34,17 +33,6 @@ class MainApplication : Application() {
         } else {
             sendServiceRecreated()
         }
-//        startExpirationCheckService()
-        // 初始化网络请求工具
-//        ApiClient.initialize(this)
-    }
-
-    /**
-     * 开启过期时间检测服务
-     */
-    private fun startExpirationCheckService() {
-        val intent = Intent(this, ExpirationCheckService::class.java)
-        startService(intent)
     }
 
     private fun extractGeoFiles() {

@@ -10,6 +10,7 @@ import com.github.kr328.clash.common.compat.isAllowForceDarkCompat
 import com.github.kr328.clash.common.compat.isLightNavigationBarCompat
 import com.github.kr328.clash.common.compat.isLightStatusBarsCompat
 import com.github.kr328.clash.common.compat.isSystemBarsTranslucentCompat
+import com.github.kr328.clash.common.log.MetaLog
 import com.github.kr328.clash.core.bridge.ClashException
 import com.github.kr328.clash.design.Design
 import com.github.kr328.clash.design.model.DarkMode
@@ -166,6 +167,11 @@ abstract class BaseActivity<D : Design<*>> : AppCompatActivity(),
         events.trySend(Event.ServiceRecreated)
     }
 
+    override fun onExpirationExpired() {
+        MetaLog.i("onExpirationExpired")
+        events.trySend(Event.ExpirationExpired)
+    }
+
     override fun onStarted() {
         events.trySend(Event.ClashStart)
     }
@@ -222,5 +228,6 @@ abstract class BaseActivity<D : Design<*>> : AppCompatActivity(),
         ProfileChanged,
         ProfileUpdateCompleted,
         ProfileUpdateFailed,
+        ExpirationExpired,
     }
 }

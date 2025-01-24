@@ -2,6 +2,7 @@ package com.github.kr328.clash.service.util
 
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import com.github.kr328.clash.common.constants.Intents
 import com.github.kr328.clash.common.constants.Permissions
 import java.util.*
@@ -63,4 +64,9 @@ fun Context.sendClashStopped(reason: String?) {
             reason
         )
     )
+}
+
+fun Context.sendExpired() {
+    com.github.kr328.clash.common.log.Log.i("Context.sendExpired")
+    sendBroadcastSelf(Intent(Intents.ACTION_EXPIRATION_EXPIRED))
 }

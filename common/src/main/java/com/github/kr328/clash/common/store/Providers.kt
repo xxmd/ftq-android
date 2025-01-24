@@ -2,6 +2,7 @@ package com.github.kr328.clash.common.store
 
 import android.content.SharedPreferences
 import androidx.core.content.edit
+import com.github.kr328.clash.common.log.Log
 
 class SharedPreferenceProvider(private val preferences: SharedPreferences) : StoreProvider {
     override fun getInt(key: String, defaultValue: Int): Int {
@@ -15,12 +16,14 @@ class SharedPreferenceProvider(private val preferences: SharedPreferences) : Sto
     }
 
     override fun getLong(key: String, defaultValue: Long): Long {
+        Log.i(key + "preferences.contains(key) " + preferences.contains(key))
         return preferences.getLong(key, defaultValue)
     }
 
     override fun setLong(key: String, value: Long) {
+        Log.i(key + "setLong key value" + key + "  " + value)
         preferences.edit {
-            putLong(key, value)
+            putLong(key, value).commit()
         }
     }
 

@@ -1,5 +1,8 @@
 package com.github.kr328.clash.common.store
 
+import com.github.kr328.clash.common.log.Log
+import com.github.kr328.clash.common.log.MetaLog
+import com.github.kr328.clash.common.util.format
 import java.util.Date
 import kotlin.reflect.KProperty
 
@@ -100,11 +103,15 @@ class Store(val provider: StoreProvider) {
     fun date(key: String, defaultValue: Date): Delegate<Date> {
         return object : Delegate<Date> {
             override fun getValue(thisRef: Any?, property: KProperty<*>): Date {
+                val threadName = Thread.currentThread().name
+                MetaLog.i("${threadName} thisRef: ${thisRef} date getValue key: ${thisRef} defaultValue: ${defaultValue.format()}")
                 val timestamp = provider.getLong(key, defaultValue.time)
+                MetaLog.i("${threadName} thisRef: ${thisRef}  date getValue result: ${Date(timestamp).format()}")
                 return Date(timestamp)
             }
 
             override fun setValue(thisRef: Any?, property: KProperty<*>, value: Date) {
+                MetaLog.i(" thisRef: ${thisRef} date setValue: " + value.format())
                 provider.setLong(key, value.time)
             }
         }

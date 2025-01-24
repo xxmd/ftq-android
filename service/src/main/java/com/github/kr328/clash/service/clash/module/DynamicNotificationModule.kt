@@ -10,12 +10,15 @@ import com.github.kr328.clash.common.compat.getColorCompat
 import com.github.kr328.clash.common.compat.pendingIntentFlags
 import com.github.kr328.clash.common.constants.Components
 import com.github.kr328.clash.common.constants.Intents
+import com.github.kr328.clash.common.log.Log
 import com.github.kr328.clash.common.util.ticker
 import com.github.kr328.clash.core.Clash
 import com.github.kr328.clash.core.util.trafficDownload
 import com.github.kr328.clash.core.util.trafficUpload
 import com.github.kr328.clash.service.R
 import com.github.kr328.clash.service.StatusProvider
+import com.github.kr328.clash.service.store.ServiceStore
+import com.github.kr328.clash.service.util.sendExpired
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.selects.select
@@ -28,7 +31,7 @@ class DynamicNotificationModule(service: Service) : Module<Unit>(service) {
         .setColor(service.getColorCompat(R.color.color_clash))
         .setOnlyAlertOnce(true)
         .setShowWhen(false)
-        .setContentTitle("Not Selected")
+        .setContentTitle(service.getString(R.string.clash_meta_for_android))
         .setForegroundServiceBehavior(NotificationCompat.FOREGROUND_SERVICE_IMMEDIATE)
         .setContentIntent(
             PendingIntent.getActivity(
@@ -40,7 +43,28 @@ class DynamicNotificationModule(service: Service) : Module<Unit>(service) {
             )
         )
 
+
+    val store = ServiceStore(service)
+
     private fun update() {
+        if (store.expirationDate.time <= System.currentTimeMillis()) {
+            onExpired()
+        } else {
+            onNotExpired()
+        }
+    }
+
+    private fun onExpired() {
+        Log.i("onExpired")
+        val notification = builder
+            .setContentText("剩余时长为0，请及时充值")
+            .setSubText("")
+            .build()
+        service.sendExpired()
+        service.startForeground(R.id.nf_expiration_stat, notification)
+    }
+
+    private fun onNotExpired() {
         val now = Clash.queryTrafficNow()
         val total = Clash.queryTrafficTotal()
 
@@ -79,7 +103,7 @@ class DynamicNotificationModule(service: Service) : Module<Unit>(service) {
             addAction(Intents.ACTION_PROFILE_LOADED)
         }
 
-        val ticker = ticker(TimeUnit.SECONDS.toMillis(1))
+        val ticker = ticker(TimeUnit.SECONDS.toMillis(3))
 
         while (true) {
             select<Unit> {
@@ -87,6 +111,7 @@ class DynamicNotificationModule(service: Service) : Module<Unit>(service) {
                     when (it.action) {
                         Intent.ACTION_SCREEN_ON ->
                             shouldUpdate = true
+
                         Intent.ACTION_SCREEN_OFF ->
                             shouldUpdate = false
                     }

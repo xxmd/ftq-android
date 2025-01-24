@@ -54,7 +54,6 @@ class ActivationCodeInputDesign(context: Context) :
             binding.textLayout.isErrorEnabled = errorMessage != null
 
             doOnTextChanged { text, _, _, _ ->
-                binding.textField.setText(text?.trim())
                 binding.btnClearInput.isEnabled = !text.isNullOrEmpty()
                 if (ValidatorUUIDString(text?.toString() ?: "")) {
                     binding.textLayout.error = null
@@ -90,7 +89,7 @@ class ActivationCodeInputDesign(context: Context) :
                             "激活日期：%s\n" +
                             "激活设备：%s",
                     activationCode.activateTime.format(),
-                    activationCode.device!!.model
+                    activationCode.device!!.manufacturer + " " + activationCode.device!!.model
                 )
             )
             .setPositiveButton(R.string.ok) { _, _ -> }
@@ -125,7 +124,8 @@ class ActivationCodeInputDesign(context: Context) :
         val baseDate = getMaxDate(service.expirationDate, Date())
         val calendar = Calendar.getInstance()
         calendar.time = baseDate
-        calendar.add(Calendar.DAY_OF_YEAR, activationCode.subscription.activationDays)
+        calendar.add(Calendar.SECOND, 30)
+//        calendar.add(Calendar.DAY_OF_YEAR, activationCode.subscription.activationDays)
         MaterialAlertDialogBuilder(context)
             .setTitle("激活成功")
             .setMessage(
@@ -180,13 +180,14 @@ class ActivationCodeInputDesign(context: Context) :
         call.enqueue(SimpleCallback(
             onSuccess = { data ->
                 daoActivationCode = data
-                if (daoActivationCode!!.device != null) {
-                    // 激活码已经被使用
-                    showCodeBeUsedDialog(daoActivationCode!!)
-                } else {
-                    // 激活码存在且未被使用
-                    showCodeConfirmDialog(daoActivationCode!!)
-                }
+//                if (daoActivationCode!!.device != null) {
+//                    // 激活码已经被使用
+//                    showCodeBeUsedDialog(daoActivationCode!!)
+//                } else {
+//                    // 激活码存在且未被使用
+//                    showCodeConfirmDialog(daoActivationCode!!)
+//                }
+                showCodeConfirmDialog(daoActivationCode!!)
             },
             onError = { code, message ->
                 showCodeNotExistDialog()

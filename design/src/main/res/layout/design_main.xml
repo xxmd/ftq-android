@@ -118,9 +118,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginVertical="@dimen/main_card_margin_vertical"
-                    android:onClick="@{() -> self.request(Request.CopyQQGroupCount)}"
+                    android:onClick="@{() -> self.request(Request.JoinQQGroup)}"
                     app:icon="@drawable/qq"
-                    app:iconExtra="@drawable/copy"
+                    app:iconExtra="@drawable/join"
                     app:subtext="@string/qq_group_account"
                     app:text="佛跳墙 QQ 售后群" />
 
@@ -132,7 +132,7 @@
 
                     <com.github.kr328.clash.design.view.ActionButton
                         android:layout_marginTop="10dp"
-                        android:onClick="@{() -> self.request(Request.ACTIVATE)}"
+                        android:onClick="@{() -> self.request(Request.Activate)}"
                         android:text="兑换激活码"
                         android:layout_width="0dp"
                         android:layout_weight="2"
@@ -141,7 +141,7 @@
                     <com.github.kr328.clash.design.view.ActionButton
                         android:layout_marginLeft="10dp"
                         android:layout_marginTop="10dp"
-                        android:onClick="@{() -> self.request(Request.PURCHASE)}"
+                        android:onClick="@{() -> self.request(Request.Purchase)}"
                         android:text="立即购买"
                         android:layout_width="0dp"
                         android:layout_weight="3"

@@ -17,6 +17,7 @@ class StatusClient(private val context: Context) {
 
     fun currentProfile(): String? {
         return try {
+            Log.i("uri: " + uri)
             val result = context.contentResolver.call(
                 uri,
                 StatusProvider.METHOD_CURRENT_PROFILE,

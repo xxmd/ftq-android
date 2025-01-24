@@ -14,7 +14,6 @@ import com.github.kr328.clash.service.util.sendBroadcastSelf
 
 fun Context.startClashService(): Intent? {
     val startTun = UiStore(this).enableVpn
-    Log.i("startTun: " + startTun);
     if (startTun) {
         val vpnRequest = VpnService.prepare(this)
         if (vpnRequest != null)

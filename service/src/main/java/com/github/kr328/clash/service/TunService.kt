@@ -43,6 +43,7 @@ class TunService : VpnService(), CoroutineScope by CoroutineScope(Dispatchers.De
         install(AppListCacheModule(self))
         install(TimeZoneModule(self))
         install(SuspendModule(self))
+//        install(ExpirationCheckModule(self))
 
         try {
             tun.open()
@@ -95,9 +96,7 @@ class TunService : VpnService(), CoroutineScope by CoroutineScope(Dispatchers.De
         StatusProvider.serviceRunning = true
 
         StaticNotificationModule.createNotificationChannel(this)
-        StaticNotificationModule.notifyLoadingNotification(this)
-
-        Log.i("Clash runtime launch");
+//        StaticNotificationModule.notifyLoadingNotification(this)
         runtime.launch()
     }
 

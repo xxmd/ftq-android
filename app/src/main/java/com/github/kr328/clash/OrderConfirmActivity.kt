@@ -2,6 +2,7 @@ package com.github.kr328.clash
 
 import android.content.Intent
 import android.net.Uri
+import android.os.Handler
 import com.github.kr328.clash.design.OrderConfirmDesign
 import com.github.kr328.clash.design.dialog.DialogManager
 import com.github.kr328.clash.service.model.Sku
@@ -26,6 +27,7 @@ class OrderConfirmActivity : BaseActivity<OrderConfirmDesign>() {
     // 对应的 sku
     private lateinit var sku: Sku
 
+    private val handler = Handler()
     override suspend fun main() {
         val design = OrderConfirmDesign(this)
         setContentDesign(design)
@@ -66,6 +68,7 @@ class OrderConfirmActivity : BaseActivity<OrderConfirmDesign>() {
             intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
             startActivity(intent)
             DialogManager.showLoadingDialog("前往付款平台中...")
+            handler.postDelayed({ DialogManager.hideLoadingDialog() }, 1000 * 10)
         } catch (e: Exception) {
             DialogManager.hideLoadingDialog()
             val platformName = sku.platform.name

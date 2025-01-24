@@ -1,21 +1,23 @@
 package com.github.kr328.clash
 
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
 import androidx.activity.result.contract.ActivityResultContracts
+import com.github.kr328.clash.common.constants.Intents
 import com.github.kr328.clash.common.log.Log
 import com.github.kr328.clash.common.util.intent
 import com.github.kr328.clash.common.util.ticker
 import com.github.kr328.clash.core.bridge.Bridge
 import com.github.kr328.clash.design.MainDesign
-import com.github.kr328.clash.design.MainDesign.Request
 import com.github.kr328.clash.design.ui.ToastDuration
+import com.github.kr328.clash.remote.StatusClient
 import com.github.kr328.clash.service.model.Profile
-import com.github.kr328.clash.service.store.ServiceStore
 import com.github.kr328.clash.util.startClashService
 import com.github.kr328.clash.util.stopClashService
 import com.github.kr328.clash.util.withClash
 import com.github.kr328.clash.util.withProfile
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
@@ -40,12 +42,13 @@ class MainActivity : BaseActivity<MainDesign>() {
         while (isActive) {
             select<Unit> {
                 events.onReceive {
+                    Log.i("onReceive event ${it}")
                     when (it) {
                         Event.ActivityStart,
                         Event.ServiceRecreated,
                         Event.ClashStop, Event.ClashStart,
                         Event.ProfileLoaded, Event.ProfileChanged -> design.fetch()
-
+                        Event.ExpirationExpired -> stopClash()
                         else -> Unit
                     }
                 }
@@ -80,18 +83,17 @@ class MainActivity : BaseActivity<MainDesign>() {
                         MainDesign.Request.OpenAbout ->
                             design.showAbout(queryAppVersionName())
 
-                        MainDesign.Request.CopyQQGroupCount -> {
-                            design.copyQQGroupCount()
+                        MainDesign.Request.JoinQQGroup -> {
+                            design.joinQQGroup()
                         }
 
-                        MainDesign.Request.PURCHASE -> {
+                        MainDesign.Request.Purchase -> {
                             startActivity(SubscriptionsActivity::class.intent)
                         }
 
-                        MainDesign.Request.ACTIVATE -> {
+                        MainDesign.Request.Activate -> {
                             startActivity(ActivationCodeInputActivity::class.intent)
                         }
-
                     }
                 }
                 if (clashRunning) {
@@ -100,6 +102,12 @@ class MainActivity : BaseActivity<MainDesign>() {
                     }
                 }
             }
+        }
+    }
+
+    private fun stopClash() {
+        if (clashRunning) {
+            stopClashService()
         }
     }
 
@@ -144,7 +152,7 @@ class MainActivity : BaseActivity<MainDesign>() {
                 }
             }
         } catch (e: Exception) {
-            TODO("Not yet implemented")
+            Log.i(e.message!!)
         }
     }
 
@@ -209,10 +217,5 @@ class MainActivity : BaseActivity<MainDesign>() {
                 0
             ).versionName + "\n" + Bridge.nativeCoreVersion().replace("_", "-")
         }
-    }
-
-    override fun onResume() {
-        super.onResume()
-        design?.updateExpiration()
     }
 }

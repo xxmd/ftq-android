@@ -3,10 +3,15 @@ package com.github.kr328.clash.design
 import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
+import android.net.Uri
 import android.view.View
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.core.content.getSystemService
-import com.github.kr328.clash.common.log.Log
+import com.github.kr328.clash.common.constants.Intents
+import com.github.kr328.clash.common.constants.Permissions
 import com.github.kr328.clash.common.util.format
 import com.github.kr328.clash.core.model.FetchStatus
 import com.github.kr328.clash.core.model.TunnelState
@@ -22,6 +27,7 @@ import com.github.kr328.clash.design.util.root
 import com.github.kr328.clash.service.store.ServiceStore
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.util.*
@@ -36,13 +42,13 @@ class MainDesign(context: Context) : Design<MainDesign.Request>(context) {
         OpenSettings,
         OpenHelp,
         OpenAbout,
-        CopyQQGroupCount,
-        PURCHASE,
-        ACTIVATE,
+        JoinQQGroup,
+        Purchase,
+        Activate,
     }
 
     val service = ServiceStore(context)
-
+    private var toastHasPopped = false
     private val binding = DesignMainBinding
         .inflate(context.layoutInflater, context.root, false)
 
@@ -98,25 +104,37 @@ class MainDesign(context: Context) : Design<MainDesign.Request>(context) {
 
     init {
         binding.self = this
-
         binding.colorClashStarted = context.resolveThemedColor(R.attr.colorPrimary)
         binding.colorClashStopped = context.resolveThemedColor(R.attr.colorClashStopped)
-        updateExpiration()
+        loopCheckExpiration()
+
     }
 
-    fun updateExpiration() {
-        val (remainTime, hasRemaining) = computeRemain()
-        binding.tvExpiration.text = String.format("剩余时间: %s", remainTime)
-        binding.tvExpiration.subtext = String.format("有效期至: %s", service.expirationDate.format())
-        binding.cardAppForbidden.visibility = if (!hasRemaining) View.VISIBLE else View.GONE
-        binding.cardClashSwitch.visibility = if (hasRemaining) View.VISIBLE else View.GONE
-        if (!hasRemaining) {
-            GlobalScope.launch(Dispatchers.Main) {
-                showToast("您的使用有效期不足，请尽快充值", ToastDuration.Indefinite) {
-                    setAction(R.string.ok) {
-                        requests.trySend(Request.PURCHASE)
+    fun loopCheckExpiration() {
+        GlobalScope.launch(Dispatchers.Main) {
+            while (true) {
+                val (remainTime, hasRemaining) = computeRemain()
+
+                // 更新UI
+                binding.tvExpiration.text = String.format("剩余: %s", remainTime)
+                binding.tvExpiration.subtext =
+                    String.format("有效期至: %s", service.expirationDate.format())
+
+                binding.cardAppForbidden.visibility = if (!hasRemaining) View.VISIBLE else View.GONE
+                binding.cardClashSwitch.visibility = if (hasRemaining) View.VISIBLE else View.GONE
+
+                if (!hasRemaining && !toastHasPopped) {
+                    showToast("您的使用有效期不足，请尽快充值", ToastDuration.Indefinite) {
+                        setAction("前往充值") {
+                            toastHasPopped = false
+                            requests.trySend(Request.Purchase)
+                        }
                     }
+                    toastHasPopped = true
                 }
+
+                // 每五秒进行一次检查
+                delay(5000L) // 5000毫秒 = 5秒
             }
         }
     }
@@ -124,16 +142,14 @@ class MainDesign(context: Context) : Design<MainDesign.Request>(context) {
     private fun computeRemain(): Pair<String, Boolean> {
         val remainMillis = service.expirationDate.time - Date().time
         if (remainMillis <= 0) {
-            return Pair("0 小时", false)  // 如果过期，返回 0 天 0 小时
+            return Pair("0 小时 0 分钟", false)
         }
-
-        // 计算剩余天数
-        val remainDays = (remainMillis / (1000 * 60 * 60 * 24)).toInt()
-
-        // 计算剩余小时数
-        val remainHours = ((remainMillis % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)).toInt()
-
-        return Pair("$remainDays 天 $remainHours 小时", true)
+        // 使用毫秒计算剩余时间
+        val totalMinutes = (remainMillis / (1000 * 60)).toInt()
+        val remainDays = totalMinutes / (24 * 60) // 每天的分钟数
+        val remainHours = (totalMinutes % (24 * 60)) / 60 // 每小时的分钟数
+        val remainMinutes = totalMinutes % 60 // 剩余的分钟数
+        return Pair("$remainDays 天 $remainHours 小时 $remainMinutes 分钟", true)
     }
 
     fun request(request: Request) {
@@ -181,12 +197,25 @@ class MainDesign(context: Context) : Design<MainDesign.Request>(context) {
         }
     }
 
-    suspend fun copyQQGroupCount() {
-        val data =
-            ClipData.newPlainText("QQGroupCount", context.getString(R.string.qq_group_account))
-        context.getSystemService<ClipboardManager>()?.setPrimaryClip(data)
-        showToast("复制群号成功", ToastDuration.Long) {
-            setAction(R.string.ok) {
+    fun joinQQGroup() {
+        try {
+            val key = "SSgZfrL-nWYuhZsboo261vM8Pn1eyXFV"
+            val url =
+                "mqqopensdkapi://bizAgent/qm/qr?url=http%3A%2F%2Fqm.qq.com%2Fcgi-bin%2Fqm%2Fqr%3Ffrom%3Dapp%26p%3Dandroid%26jump_from%3Dwebapi%26k%3D" + key
+            val intent = Intent(Intent.ACTION_VIEW).apply {
+                data = Uri.parse(url)
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+            }
+            context.startActivity(intent)
+        } catch (e: Exception) {
+            val qqGroupAccount =
+                ClipData.newPlainText("QQGroupCount", context.getString(R.string.qq_group_account))
+            context.getSystemService<ClipboardManager>()?.setPrimaryClip(qqGroupAccount)
+            GlobalScope.launch(Dispatchers.Main) {
+                showToast("无法自动加入，已将群号复制至剪切板", ToastDuration.Long) {
+                    setAction(R.string.ok) {
+                    }
+                }
             }
         }
     }

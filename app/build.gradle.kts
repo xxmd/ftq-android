@@ -6,7 +6,6 @@ plugins {
     kotlin("android")
     kotlin("kapt")
     id("com.android.application")
-    id("com.google.gms.google-services")
 }
 
 dependencies {
@@ -23,8 +22,6 @@ dependencies {
     implementation(libs.androidx.coordinator)
     implementation(libs.androidx.recyclerview)
     implementation(libs.google.material)
-//    implementation(platform("com.google.firebase:firebase-bom:32.8.0"))
-//    implementation("com.google.firebase:firebase-analytics")
     implementation ("com.github.bumptech.glide:glide:4.15.1")  // Glide 库
     annotationProcessor ("com.github.bumptech.glide:compiler:4.15.1")  // Glide 注解处理器
     implementation ("com.google.code.gson:gson:2.8.8")
